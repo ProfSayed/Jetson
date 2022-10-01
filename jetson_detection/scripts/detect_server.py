@@ -93,7 +93,7 @@ class DetectionAction(object):
         
         if success:
             self._result.cylinder_number = goal.cylinder_number
-            # self._result.has_cap = predict
+            self._result.has_cap = predict
             self._result.time_stamp = rospy.Time.now()
             rospy.loginfo('%s: Succeeded' % self._action_name)
             self._as.set_succeeded(self._result)

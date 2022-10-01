@@ -71,8 +71,7 @@ class CylinderPushServer:
             rospy.loginfo("Aborted")
             goal_handle.set_aborted(self._result)
         rospy.loginfo("--------Goal Processing Finished")
-
-            
+     
     def on_goal(self, goal_handle):
         rospy.loginfo("Recieved new goal")
         self.process_goal(goal_handle)

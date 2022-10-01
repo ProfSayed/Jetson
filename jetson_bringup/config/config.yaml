@@ -1,10 +1,12 @@
 # Sensors Topics
 initial_cylinder_index: 0
 sensor_current_threshold: 2
-frequency: 30
+frequency: 30 #hz
 stopper_sensor: 
+  i2c_address: 0x40
   topic_name: stopper_count
 pusher_sensor: 
+  i2c_address: 0x41
   topic_name: pusher_count
 # -------------------------
 # Actuator Servers
@@ -12,7 +14,7 @@ stopper_actuator:
   gpio: board.D17
   topic_name: stopper_action
 pusher_actuator: 
-  gpio: board.D17
+  gpio: board.D22
   topic_name: pusher_action
 # -------------------------
 # Pusher Queue Server
