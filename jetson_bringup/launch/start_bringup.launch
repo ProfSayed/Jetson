@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- Init Parameters -->
+    <include file="$(find jetson_bringup)/launch/param_initializer.launch"/>
+    
+    <!-- Start the central unit -->
+    <node name="central_unit" pkg="jetson_bringup" type="alpha_node.py"/>
+
+    <!-- Start Sensors Counting -->
+    <node name="stopper_sensor" pkg="jetson_data" type="count_sensor.py" />
+    <node name="pusher_sensor"  pkg="jetson_data" type="count_sensor.py" />
+
+    <!-- Start Camera & Object Detection -->
+    <node name="detect_server" pkg="jetson_detection" type="detect_server.py"/>
+
+    <!-- Start Actuators Servers "Pusher & Stopper" -->
+    <node name="stopper_server" pkg="jetson_action" type="actuator_server.py" />
+    <node name="pusher_server"  pkg="jetson_action" type="actuator_server.py" />
+</launch>

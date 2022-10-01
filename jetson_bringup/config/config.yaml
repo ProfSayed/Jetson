@@ -1,0 +1,32 @@
+# Sensors Topics
+initial_cylinder_index: 0
+sensor_current_threshold: 2
+frequency: 30
+stopper_sensor: 
+  topic_name: stopper_count
+pusher_sensor: 
+  topic_name: pusher_count
+# -------------------------
+# Actuator Servers
+stopper_actuator: 
+  gpio: board.D17
+  topic_name: stopper_action
+pusher_actuator: 
+  gpio: board.D17
+  topic_name: pusher_action
+# -------------------------
+# Pusher Queue Server
+push_action_server:
+  server_name: pusher_queue_server
+# -------------------------
+# Object Detection Action Server
+detect_server:
+  server_name: object_detection
+  model_path: "$(find jetson_detection)/models/best_cylinders.pt"
+  frequency: 30
+  ## Camera Capture Settings
+  camera: {
+    capture_width : 3264,
+    capture_height : 2464,
+    fps : 21,
+  }

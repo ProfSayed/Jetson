@@ -1,0 +1,9 @@
+#goal
+uint64 cylinder_number
+---
+#result
+uint64 cylinder_kicked
+time time_stamp
+---
+#feedback
+uint64 cylinder_reached
