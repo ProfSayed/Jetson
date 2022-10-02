@@ -13,9 +13,11 @@ pusher_sensor:
 stopper_actuator: 
   gpio: board.D17
   topic_name: stopper_action
+  delay_action: 2.0 #in seconds
 pusher_actuator: 
   gpio: board.D22
   topic_name: pusher_action
+  delay_action: 2.0 #in seconds
 # -------------------------
 # Pusher Queue Server
 push_action_server:

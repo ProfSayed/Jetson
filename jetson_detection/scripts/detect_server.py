@@ -105,4 +105,6 @@ if __name__ == '__main__':
         server = DetectionAction(name)
         rospy.spin()
     except rospy.ROSInterruptException:
+        pass
+    finally:
         server.net.cam.release()        
