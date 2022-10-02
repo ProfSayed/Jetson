@@ -1,6 +1,7 @@
 # Setup the environment  
 ```bash  
 sudo pip3 install rospkg catkin_pkg
+sudo pip3 install --upgrade adafruit_blinka
 ```
 ## Create the workspace and download the repo
 ```bash  
