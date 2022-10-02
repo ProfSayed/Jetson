@@ -10,11 +10,11 @@ pusher_sensor:
   topic_name: pusher_count
 # -------------------------
 # Actuator Servers
-stopper_actuator: 
+stopper_server: 
   gpio: board.D17
   topic_name: stopper_action
   delay_action: 2.0 #in seconds
-pusher_actuator: 
+pusher_server: 
   gpio: board.D22
   topic_name: pusher_action
   delay_action: 2.0 #in seconds

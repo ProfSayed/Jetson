@@ -8,7 +8,7 @@ from jetson_msgs.srv import Actuator,ActuatorResponse
 def actuate_cb(req):
     rospy.sleep(delay_secs)
     actuator_io.value = req.actuate
-    rospy.loginfo("Stopping Action: %s"%(req.actuate))
+    rospy.loginfo("%s action: %s"%(rospy.get_name(), req.actuate))
     return ActuatorResponse(True)
 
 if __name__ == "__main__":
@@ -28,4 +28,3 @@ if __name__ == "__main__":
         pass
     finally:
         GPIO.cleanup()
-

@@ -12,20 +12,32 @@ catkin_make
 echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc  
 source ~/.bashrc  
 ```
+Make all python scripts executable in the directory in order to run them  
+```bash  
+cd ~/catkin_ws/src/Jetson  
+find ./ -name *.py -exec chmod +x {} \;
+```
 # Running the System
 ## To run the full system  
 ```bash  
 roslaunch jetson_bringup start_bringup.launch  
 ```
 ## To run nodes individually  
-First: Initialize parameters  
+1. Run roscore
+```bash  
+roscore  
+```
+2. In a new Shell: Initialize parameters  
 ```bash  
 roslaunch jetson_bringup param_initializer.launch  
 ```
-Now any node as you like:  
-* Run Object Detection node
-```rosrun jetson_detection detect_server.py```
-* Run Pusher
-```rosrun jetson_detection detect_server.py```
-* Run Stopper
+Now Run any node as you like:  
+* Run Object Detection node  
+```rosrun jetson_detection detect_server.py```  
+* Run Pusher and Stopper Server  
+```roslaunch jetson_bringup start_actuators.launch```  
+* You can now Call Stopper and the Pusher (True or False)  
+```rosservice call /pusher_action True```  
+```rosservice call /stopper_action True```  
+
 
