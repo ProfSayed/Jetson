@@ -26,7 +26,7 @@ push_action_server:
 # Object Detection Action Server
 detect_server:
   server_name: object_detection
-  model_path: "$(find jetson_detection)/models/best_cylinders.pt"
+  model_path: "$(find jetson_detection)/models/best.engine"
   frequency: 30
   ## Camera Capture Settings
   camera: {
