@@ -4,15 +4,13 @@ import torch
 import rospy
 
 def predict(image, model, resolution):
-    predictions = []
+    predictions = -1
     result = model(image, size=resolution)
-    n = len(result.xyxy[0].cpu().numpy().tolist())
+    output = result.xyxy[0].cpu().numpy().tolist()
 
-    if n > 0:
-        predictions = result.xyxy[0].cpu().numpy().tolist()[0][-1]
-        return predictions, result.render()[0]
-    else:
-        return -1, image 
+    if len(output) > 0:
+        predictions = output[0][-1]
+    return predictions
         
 def most_frequent(prediction_list):
     counter = 0
@@ -53,14 +51,17 @@ def main():
         while not rospy.is_shutdown():
             ret, frame = cam.read()
             if ret:
-                p, img = predict(frame, model, 640)
+                p = predict(frame, model, 240)
                 predictions.append(p)
 
             if n == 3:
                 n = 0
                 predict = most_frequent(predictions)
                 predictions.clear()
-                print(predict)
+                # if predict ==  0 : with_cap
+                # if predict ==  1 : without_cap
+                # if predict == -1 : Unknown
+                rospy.loginfo("Result: %d" %predict)
 
             n += 1
             rate.sleep()

@@ -35,10 +35,15 @@ roslaunch jetson_bringup param_initializer.launch
 Now Run any node as you like:  
 * Run Object Detection node  
 ```rosrun jetson_detection detect_server.py```  
-* Run Pusher and Stopper Server  
+* Run Pusher and Stopper Actuators Server  
 ```roslaunch jetson_bringup start_actuators.launch```  
-* You can now Call Stopper and the Pusher (True or False)  
+* You can now Call Stopper and the Pusher (True or False) Actuators  
 ```rosservice call /pusher_action True```  
 ```rosservice call /stopper_action True```  
+* Run Sensors for both the Pusher and Stopper   
+```roslaunch jetson_bringup start_sensors.launch```  
+* You can now Start the counter sensors and listen to them    
+```rostopic echo /pusher_count ```  
+```rostopic echo /stopper_count ```  
 
 

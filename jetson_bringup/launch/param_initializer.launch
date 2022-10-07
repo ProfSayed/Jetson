@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-    <!-- Load Configuration Files -->
-    <rosparam command="load" subst_value="true" file="$(find jetson_bringup)/config/config.yaml" />    
-</launch>
