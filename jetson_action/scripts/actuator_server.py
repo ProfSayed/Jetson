@@ -18,7 +18,10 @@ if __name__ == "__main__":
         delay_secs = rospy.get_param('~delay_action')
         ## Initialize gpio
         actuator_pin = rospy.get_param('~gpio')
-        actuator_io = digitalio.DigitalInOut(actuator_pin)
+        if actuator_pin == "D22":
+            actuator_io = digitalio.DigitalInOut(board.D22)
+        if actuator_pin == "D17":
+            actuator_io = digitalio.DigitalInOut(board.D17)
         actuator_io.direction = digitalio.Direction.OUTPUT
         ## Start Server
         rospy.Service(topic_name, Actuator, actuate_cb)
@@ -27,4 +30,5 @@ if __name__ == "__main__":
     except rospy.ROSInterruptException:
         pass
     finally:
+        actuator_io.value=False
         GPIO.cleanup()

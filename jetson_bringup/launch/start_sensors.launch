@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>   
+    <!-- Init Parameters -->
+    <include file="$(find jetson_bringup)/launch/param_initializer.launch"/>
+
+    <!-- Start Sensors Counting -->
+    <node name="stopper_sensor" pkg="jetson_data" type="count_sensor.py" />
+    <node name="pusher_sensor"  pkg="jetson_data" type="count_sensor.py" />
+
+</launch>
