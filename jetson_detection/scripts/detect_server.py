@@ -21,6 +21,7 @@ def most_frequent(prediction_list):
             counter = curr_frequency
             num = i
     return num
+    
 def main():
     try:
         rospy.init_node('detect_server')

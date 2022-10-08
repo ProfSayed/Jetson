@@ -27,16 +27,14 @@ class YoloPipe():
         camSet='nvarguscamerasrc !  video/x-raw(memory:NVMM), width='+str(capW)+', height='+str(capH)+', format=NV12, framerate='+str(fps)+'/1 ! nvvidconv flip-method='+str(flip)+' ! video/x-raw, width='+str(dispW)+', height='+str(dispH)+', format=BGRx ! videoconvert ! video/x-raw, format=BGR ! appsink'
         self.cam = cv2.VideoCapture(camSet)
 
-    def predict(image, model, resolution):
-        predictions = []
+    def predict_fn(image, model, resolution):
+        predictions = -1
         result = model(image, size=resolution)
-        n = len(result.xyxy[0].cpu().numpy().tolist())
+        output = result.xyxy[0].cpu().numpy().tolist()
 
-        if n > 0:
-            predictions = result.xyxy[0].cpu().numpy().tolist()[0][-1]
-            return predictions, result.render()[0]
-        else:
-            return -1, image 
+        if len(output) > 0:
+            predictions = output[0][-1]
+        return predictions
         
     def most_frequent(prediction_list):
         counter = 0
