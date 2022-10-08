@@ -27,10 +27,10 @@ push_action_server:
 detect_server:
   server_name: object_detection
   model_path: "$(find jetson_detection)/models/best.engine"
-  frequency: 30
+  frequency: 10
   ## Camera Capture Settings
   camera: {
-    capture_width : 3264,
-    capture_height : 2464,
-    fps : 21,
+    capture_width : 1280,
+    capture_height : 720,
+    fps : 60,
   }
