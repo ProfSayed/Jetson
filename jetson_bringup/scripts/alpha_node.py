@@ -38,7 +38,7 @@ class Client:
         rospy.loginfo("The Cylinder has been stopped")
 
         ### 2. Identify the Cylinder
-        goal = DetectGoal(cylinder_number=data.cylinder_number, time_stamp=rospy.Time.now())
+        goal = DetectGoal(cylinder_number=data.cylinder_number, number_of_frames=3)
         self._ac_detect.send_goal(goal, done_cb=self.detect_done_callback, feedback_cb=self.detect_feedback_callback)
         rospy.loginfo("Detection Goal has been sent")
     
