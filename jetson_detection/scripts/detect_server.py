@@ -22,57 +22,53 @@ def most_frequent(prediction_list):
             num = i
     return num
 
-def main():
-    try:
-        rospy.init_node('detect_server')
-        ## Detection Frequency
-        detection_rate = rospy.get_param('~frequency')
-        rate = rospy.Rate(detection_rate)
+try:
+    rospy.init_node('detect_server')
+    ## Detection Frequency
+    detection_rate = rospy.get_param('~frequency')
+    rate = rospy.Rate(detection_rate)
 
-        ## Load Object Detection Model
-        model_path = rospy.get_param('~model_path')
-        model = torch.hub.load('ultralytics/yolov5', 'custom', path=model_path)  
-        model.conf = 0.4
+    ## Load Object Detection Model
+    model_path = rospy.get_param('~model_path')
+    model = torch.hub.load('ultralytics/yolov5', 'custom', path=model_path)  
+    model.conf = 0.4
 
-        ## Camera
-        # Camera Display Settings
-        dispW = 1280
-        dispH = 720
-        flip  = 2
-        # Camera Capture Settings
-        capW = rospy.get_param('~camera/capture_width')
-        capH = rospy.get_param('~camera/capture_height')
-        fps = rospy.get_param('~camera/fps')
-        camSet='nvarguscamerasrc !  video/x-raw(memory:NVMM), width='+str(capW)+', height='+str(capH)+', format=NV12, framerate='+str(fps)+'/1 ! nvvidconv flip-method='+str(flip)+' ! video/x-raw, width='+str(dispW)+', height='+str(dispH)+', format=BGRx ! videoconvert ! video/x-raw, format=BGR ! appsink'
-        cam = cv2.VideoCapture(camSet)
+    ## Camera
+    # Camera Display Settings
+    dispW = 1280
+    dispH = 720
+    flip  = 2
+    # Camera Capture Settings
+    capW = rospy.get_param('~camera/capture_width')
+    capH = rospy.get_param('~camera/capture_height')
+    fps = rospy.get_param('~camera/fps')
+    camSet='nvarguscamerasrc !  video/x-raw(memory:NVMM), width='+str(capW)+', height='+str(capH)+', format=NV12, framerate='+str(fps)+'/1 ! nvvidconv flip-method='+str(flip)+' ! video/x-raw, width='+str(dispW)+', height='+str(dispH)+', format=BGRx ! videoconvert ! video/x-raw, format=BGR ! appsink'
+    cam = cv2.VideoCapture(camSet)
 
-        predictions = []
-        n = 0
-        while not rospy.is_shutdown():
-            ret, frame = cam.read()
-            print("Processing")
-            if ret:
-                p = predict(frame, model, 240)
-                predictions.append(p)
-                print("Appending Predictions")
+    predictions = []
+    n = 0
+    while not rospy.is_shutdown():
+        ret, frame = cam.read()
+        print("Processing")
+        if ret:
+            p = predict(frame, model, 240)
+            predictions.append(p)
+            print("Appending Predictions")
 
 
-            if n == 3:
-                n = 0
-                predict = most_frequent(predictions)
-                predictions.clear()
-                # if predict ==  0 : with_cap
-                # if predict ==  1 : without_cap
-                # if predict == -1 : Unknown
-                rospy.loginfo("Result: %d" %predict)
+        if n == 3:
+            n = 0
+            predict = most_frequent(predictions)
+            predictions.clear()
+            # if predict ==  0 : with_cap
+            # if predict ==  1 : without_cap
+            # if predict == -1 : Unknown
+            rospy.loginfo("Result: %d" %predict)
 
-            n += 1
-            rate.sleep()
+        n += 1
+        rate.sleep()
 
-    except rospy.ROSInterruptException:
-        pass
-    finally:
-        cam.release()   
-
-if __name__ == '__main__':
-    main()
+except rospy.ROSInterruptException:
+    pass
+finally:
+    cam.release()   
