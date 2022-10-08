@@ -2,5 +2,5 @@
 <launch>   
     <!-- Start Actuators Servers "Pusher & Stopper" -->
     <node name="stopper_server" pkg="jetson_action" type="actuator_server.py" output="screen" />
-    <!-- <node name="pusher_server"  pkg="jetson_action" type="actuator_server.py" output="screen" /> -->
+    <node name="pusher_server"  pkg="jetson_action" type="actuator_server.py" output="screen" />
 </launch>
