@@ -4,7 +4,7 @@ uint64 number_of_frames
 ---
 #result
 uint64 cylinder_number
-uint64 has_cap
+int64 has_cap
 time time_stamp
 ---
 #feedback
