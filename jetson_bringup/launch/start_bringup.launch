@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
     <!-- Init Parameters -->
-    <include file="$(find jetson_bringup)/launch/param_initializer.launch"/>
+    <include file="$(find jetson_bringup)/launch/init_param.launch"/>
     
     <!-- Start the central unit -->.
     <node name="alpha_node" pkg="jetson_bringup" type="alpha_node.py" output="screen"/>
