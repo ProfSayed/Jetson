@@ -9,7 +9,7 @@ from jetson_msgs.msg import CountSensor
 from jetson_msgs.srv import Actuator
 
 def stopper_client(action):
-    stopper_service = rospy.get_param('/stopper_actuator/topic_name')
+    stopper_service = rospy.get_param('/stopper_server/topic_name')
     rospy.wait_for_service(stopper_service)
     try:
         stop_cylinder = rospy.ServiceProxy(stopper_service, Actuator)
