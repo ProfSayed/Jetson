@@ -4,7 +4,7 @@
     <include file="$(find jetson_bringup)/launch/param_initializer.launch"/>
     
     <!-- Start the central unit -->.
-    <node name="alpha_node" pkg="jetson_bringup" type="alpha_node.py"/>
+    <node name="alpha_node" pkg="jetson_bringup" type="alpha_node.py" output="screen"/>
     <node name="cylinder_pusher_server" pkg="jetson_action" type="push_queue_server.py"/>
 
     <!-- Start Sensors Counting -->
