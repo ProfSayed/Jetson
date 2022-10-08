@@ -50,10 +50,10 @@ try:
     while not rospy.is_shutdown():
         ret, frame = cam.read()
         print("Processing")
-        # if ret:
-        #     p = predict(frame, model, 640)
+        if ret:
+            p = predict(frame, model, 640)
         #     predictions.append(p)
-        #     print("Appending Predictions")
+            print("Appending Predictions")
 
 
         # if n == 3:
