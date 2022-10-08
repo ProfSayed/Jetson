@@ -52,18 +52,18 @@ try:
         print("Processing")
         if ret:
             p = predict(frame, model, 640)
-        #     predictions.append(p)
+            predictions.append(p)
             print("Appending Predictions")
 
 
-        # if n == 3:
-        #     n = 0
-        #     predict = most_frequent(predictions)
-        #     predictions.clear()
+        if n == 3:
+            n = 0
+            predict = most_frequent(predictions)
+            predictions.clear()
         #     # if predict ==  0 : with_cap
         #     # if predict ==  1 : without_cap
         #     # if predict == -1 : Unknown
-        #     rospy.loginfo("Result: %d" %predict)
+            rospy.loginfo("Result: %d" %predict)
 
         n += 1
         rate.sleep()
