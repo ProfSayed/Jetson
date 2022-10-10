@@ -62,9 +62,6 @@ class DetectionAction(object):
         success = True
         rospy.loginfo('%s: Executing, Processing cylinder number %d ' % (self._action_name, goal.cylinder_number))
 
-        ## Detection
-        self.predictions.clear()
-        
         # start executing the action
         for i in range(0, goal.number_of_frames +1):
             # check that preempt has not been requested by the client
@@ -76,16 +73,17 @@ class DetectionAction(object):
 
             ret, frame = self.cam.read()
             if ret:
-                p  = self.predict_fn(frame, self.model, 640)
+                p  = self.predict_fn(frame, self.model, 240)
                 self.predictions.append(p)
 
                 ## Feedback
-                self._feedback.frame_processed = i
-                self._as.publish_feedback(self._feedback)
+                # self._feedback.frame_processed = i
+                # self._as.publish_feedback(self._feedback)
 
             rate.sleep()
         ## Exit the Loop
         predict = self.most_frequent(self.predictions)
+        self.predictions.clear()
         
         if success:
             self._result.cylinder_number = goal.cylinder_number
