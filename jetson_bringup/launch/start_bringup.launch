@@ -12,7 +12,7 @@
     <node name="pusher_sensor"  pkg="jetson_data" type="count_sensor.py" />
 
     <!-- Start Camera & Object Detection -->
-    <node name="detect_server" pkg="jetson_detection" type="detect_server.py"/>
+    <node name="detect_server" pkg="jetson_detection" type="detect_server_action.py"/>
 
     <!-- Start Actuators Servers "Pusher & Stopper" -->
     <node name="stopper_server" pkg="jetson_action" type="actuator_server.py" />
