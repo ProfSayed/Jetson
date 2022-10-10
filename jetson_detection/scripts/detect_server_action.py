@@ -73,7 +73,7 @@ class DetectionAction(object):
 
             ret, frame = self.cam.read()
             if ret:
-                p  = self.predict_fn(frame, self.model, 240)
+                p  = self.predict_fn(frame, self.model, 640)
                 self.predictions.append(p)
 
                 ## Feedback
