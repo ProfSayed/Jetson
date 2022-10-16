@@ -5,8 +5,8 @@ from jetson_msgs.srv import Actuator,ActuatorResponse
 
 def actuate_cb(req):
     rospy.sleep(delay_secs)
-    GPIO(actuator_pin, req.actuate) 
-    rospy.loginfo("%s action: %s"%(rospy.get_name(), req.actuate))
+    GPIO.output(actuator_pin, req.actuate) 
+    rospy.loginfo("%s Action: %s"%(rospy.get_name(), req.actuate))
     return ActuatorResponse(True)
 
 if __name__ == "__main__":
@@ -16,8 +16,8 @@ if __name__ == "__main__":
         delay_secs = rospy.get_param('~delay_action')
         ## Initialize gpio
         actuator_pin = rospy.get_param('~gpio')
-        GPIO.setmode(GPIO.BOARD)
-        GPIO.setup(actuator_pin,GPIO.OUT)
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(actuator_pin, GPIO.OUT, initial=GPIO.LOW)
         ## Start Server
         rospy.Service(topic_name, Actuator, actuate_cb)
         rospy.loginfo("Actuator is ready!")
@@ -25,5 +25,6 @@ if __name__ == "__main__":
     except rospy.ROSInterruptException:
         pass
     finally:
+        GPIO.output(actuator_pin, GPIO.LOW) 
         GPIO.cleanup()
 

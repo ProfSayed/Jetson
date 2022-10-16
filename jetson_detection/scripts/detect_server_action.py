@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 import cv2
 import torch
-import numpy as np
 import rospy
 import actionlib
 from jetson_msgs.msg import DetectAction
@@ -11,7 +10,7 @@ from jetson_msgs.msg import DetectFeedback
 class DetectionAction(object):
     # create messages that are used to publish feedback/result
     _feedback = DetectFeedback()
-    _result = DetectResult()
+    _result   = DetectResult()
 
     def __init__(self, name):
         self._action_name = name
@@ -21,17 +20,17 @@ class DetectionAction(object):
         ## Load Object Detection Model
         model_path = rospy.get_param('~model_path')
         self.model = torch.hub.load('ultralytics/yolov5', 'custom', path=model_path)  
-        self.model.conf = 0.7
+        self.model.conf = rospy.get_param('~model_config')
 
         ## Camera
-        # Camera Display Settings
-        dispW = 1280
-        dispH = 720
-        flip  = 2
         # Camera Capture Settings
         capW = rospy.get_param('~camera/capture_width')
         capH = rospy.get_param('~camera/capture_height')
         fps = rospy.get_param('~camera/fps')
+        # Camera Display Settings
+        dispW = capW
+        dispH = capH
+        flip  = 2
         camSet='nvarguscamerasrc !  video/x-raw(memory:NVMM), width='+str(capW)+', height='+str(capH)+', format=NV12, framerate='+str(fps)+'/1 ! nvvidconv flip-method='+str(flip)+' ! video/x-raw, width='+str(dispW)+', height='+str(dispH)+', format=BGRx ! videoconvert ! video/x-raw, format=BGR ! appsink'
         self.cam = cv2.VideoCapture(camSet)
 
@@ -57,8 +56,7 @@ class DetectionAction(object):
       
     def execute_cb(self, goal):
         ## Detection Frequency
-        detection_rate = rospy.get_param('~frequency')
-        rate = rospy.Rate(detection_rate)
+        rate = rospy.Rate(rospy.get_param('~frequency'))
         success = True
         rospy.loginfo('%s: Executing, Processing cylinder number %d ' % (self._action_name, goal.cylinder_number))
 
@@ -73,12 +71,12 @@ class DetectionAction(object):
 
             ret, frame = self.cam.read()
             if ret:
-                p  = self.predict_fn(frame, self.model, 640)
+                p  = self.predict_fn(frame, self.model, 240)
                 self.predictions.append(p)
 
                 ## Feedback
-                # self._feedback.frame_processed = i
-                # self._as.publish_feedback(self._feedback)
+                self._feedback.frame_processed = i
+                self._as.publish_feedback(self._feedback)
 
             rate.sleep()
         ## Exit the Loop
