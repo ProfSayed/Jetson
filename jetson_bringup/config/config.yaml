@@ -11,11 +11,11 @@ pusher_sensor:
 # -------------------------
 # Actuator Servers
 stopper_server: 
-  gpio: D17
+  gpio: 17
   topic_name: stopper_action
   delay_action: 2.0 #in seconds
 pusher_server: 
-  gpio: D22
+  gpio: 22
   topic_name: pusher_action
   delay_action: 2.0 #in seconds
 # -------------------------
@@ -28,6 +28,8 @@ detect_server:
   server_name: object_detection
   model_path: "$(find jetson_detection)/models/best.engine"
   frequency: 10
+  ## The Detection result is the maximum detected class for number_of_frames
+  number_of_frames : 3
   ## Camera Capture Settings
   camera: {
     capture_width : 1280,

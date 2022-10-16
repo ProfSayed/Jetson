@@ -8,7 +8,7 @@ from jetson_msgs.msg import PushFeedback
 from jetson_msgs.srv import Actuator
 
 def pusher_client(action):
-    pusher_service = rospy.get_param('/pusher_actuator/topic_name')
+    pusher_service = rospy.get_param('/pusher_server/topic_name')
     rospy.wait_for_service(pusher_service)
     try:
         push_cylinder = rospy.ServiceProxy(pusher_service, Actuator)
