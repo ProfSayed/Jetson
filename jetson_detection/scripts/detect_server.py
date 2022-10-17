@@ -3,14 +3,11 @@ import cv2
 import torch
 import rospy
 
-def predict_fn(image, model, resolution):
-    predictions = -1
+def predict_fn(image, resolution=256):
     result = model(image, size=resolution)
-    output = result.xyxy[0].cpu().numpy().tolist()
-
-    if len(output) > 0:
-        predictions = output[0][-1]
-    return predictions
+    if len(result.xyxy[0].cpu().numpy().tolist()) > 0:
+        return result.xyxy[0].cpu().numpy().tolist()[0][-1]
+    return -1
         
 def most_frequent(prediction_list):
     counter = 0
@@ -22,7 +19,7 @@ def most_frequent(prediction_list):
             num = i
     return num
     
-def main():
+if __name__ == "__main__":
     try:
         rospy.init_node('detect_server')
         ## Detection Frequency
@@ -36,13 +33,14 @@ def main():
 
         ## Camera
         # Camera Display Settings
-        dispW = 1280
-        dispH = 720
+        dispW = 640
+        dispH = 480
         flip  = 2
         # Camera Capture Settings
-        capW = rospy.get_param('~camera/capture_width')
-        capH = rospy.get_param('~camera/capture_height')
-        fps = rospy.get_param('~camera/fps')
+        capW = 1280
+        capH = 720
+        fps = 60
+        # camSet='nvarguscamerasrc !  video/x-raw(memory:NVMM), width=3264, height=2464, format=NV12, framerate=21/1 ! nvvidconv flip-method='+str(flip)+' ! video/x-raw, width='+str(dispW)+', height='+str(dispH)+', format=BGRx ! videoconvert ! video/x-raw, format=BGR ! appsink'
         camSet='nvarguscamerasrc !  video/x-raw(memory:NVMM), width='+str(capW)+', height='+str(capH)+', format=NV12, framerate='+str(fps)+'/1 ! nvvidconv flip-method='+str(flip)+' ! video/x-raw, width='+str(dispW)+', height='+str(dispH)+', format=BGRx ! videoconvert ! video/x-raw, format=BGR ! appsink'
         cam = cv2.VideoCapture(camSet)
 
@@ -52,19 +50,19 @@ def main():
             ret, frame = cam.read()
             print("Processing")
             if ret:
-                p = predict_fn(frame, model, 640)
-                predictions.append(p)
+                print("Returned Pic")
+                p = predict_fn(frame)
                 print("Appending Predictions")
+                predictions.append(p)
 
-
-            if n == 3:
-                n = 0
-                predict = most_frequent(predictions)
-                predictions.clear()
-            #     # if predict ==  0 : with_cap
-            #     # if predict ==  1 : without_cap
-            #     # if predict == -1 : Unknown
-                rospy.loginfo("Result: %d" %predict)
+                if n >= 3:
+                    n = 0
+                    predict = most_frequent(predictions)
+                    predictions.clear()
+                #     # if predict ==  0 : with_cap
+                #     # if predict ==  1 : without_cap
+                #     # if predict == -1 : Unknown
+                    rospy.loginfo("Result: %d" %predict)
 
             n += 1
             rate.sleep()
@@ -74,5 +72,3 @@ def main():
     finally:
         cam.release()   
 
-if __name__ == "__main__":
-    main()

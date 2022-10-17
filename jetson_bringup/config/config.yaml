@@ -35,5 +35,5 @@ detect_server:
   camera: {
     capture_width : 1280,
     capture_height : 720,
-    fps : 60,
+    fps : 59.9,
   }

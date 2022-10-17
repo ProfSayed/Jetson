@@ -71,12 +71,12 @@ class DetectionAction(object):
 
             ret, frame = self.cam.read()
             if ret:
-                p  = self.predict_fn(frame, self.model, 240)
+                p  = self.predict_fn(frame, self.model, 256)
                 self.predictions.append(p)
 
                 ## Feedback
-                self._feedback.frame_processed = i
-                self._as.publish_feedback(self._feedback)
+                # self._feedback.frame_processed = i
+                # self._as.publish_feedback(self._feedback)
 
             rate.sleep()
         ## Exit the Loop
