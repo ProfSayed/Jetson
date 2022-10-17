@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import rospy
 import cv2
-from cv_bridge import CvBridge
+from cv_bridge import CvBridge, CvBridgeError
 from sensor_msgs.msg import Image
 
 def main():
@@ -9,7 +9,7 @@ def main():
         rospy.init_node('cam_streamer')
         bridge = CvBridge()
         img_pub = rospy.Publisher('/camera1/raw_image', Image,queue_size=3)
-        rate = rospy.Rate(21)
+        rate = rospy.Rate(1)
 
         ## Camera
         # Camera Display Settings
@@ -27,8 +27,11 @@ def main():
             ret, cv_image = cam.read()
             rospy.loginfo_once("Started Capturing")
             if ret:
-                img_msg = bridge.cv2_to_imgmsg(cv_image, "bgr8")
-                img_pub.publish(img_msg)
+                try:
+                    img_msg = bridge.cv2_to_imgmsg(cv_image, "bgr8")
+                    img_pub.publish(img_msg)
+                except CvBridgeError as e:
+                    rospy.logerr(e)
             else:
                 rospy.logerr("Not recieving any frames")
             rate.sleep()
