@@ -26,14 +26,6 @@ push_action_server:
 # -------------------------
 # Object Detection Action Server
 detect_server:
-  server_name: object_detection
+  topic_name: object_detection
   model_path: "$(find jetson_detection)/models/best.engine"
-  frequency: 10
   model_config: 0.7     # Filter Results
-  number_of_frames : 3  # The Detection result is the maximum detected class for number_of_frames
-  ## Camera Capture Settings
-  camera: {
-    capture_width : 1280,
-    capture_height : 720,
-    fps : 59.9,
-  }

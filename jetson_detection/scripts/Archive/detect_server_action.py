@@ -8,7 +8,7 @@ from jetson_msgs.msg import DetectResult
 from jetson_msgs.msg import DetectFeedback
 
 class DetectionAction(object):
-    # create messages that are used to publish feedback/result
+    # create messages that are used to publish feedback/reWsult
     _feedback = DetectFeedback()
     _result   = DetectResult()
 

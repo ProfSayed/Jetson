@@ -7,7 +7,6 @@ _predictions = []
 n_frames = 0
 
 def predict_fn(image, resolution=256):
-    global n_frames, _predictions, model
     rospy.loginfo("Processing Image")
     result = model(image, size=resolution)
     output = len(result.xyxy[0].cpu().numpy().tolist())

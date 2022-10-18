@@ -1,0 +1,5 @@
+#Request
+sensor_msgs/Image raw_image
+---
+#Response
+int32 has_cap
