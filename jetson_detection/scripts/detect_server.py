@@ -18,10 +18,11 @@ class Process_image:
         cv_image = np.frombuffer(image_data.data, dtype=np.uint8).reshape(image_data.height, image_data.width, -1)
         
         proc_img = self.predict_fn(cv_image)
-        self._predictions.append(proc_img)
+        rospy.loginfo("Done Processing")
+        # self._predictions.append(proc_img)
 
-        if self.n_frames >= 3:
-            self.most_frequent()
+        # if self.n_frames >= 3:
+        #     self.most_frequent()
 
     def predict_fn(self, image, resolution=256):
         rospy.loginfo("Processing Image")
