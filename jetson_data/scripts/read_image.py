@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 import cv2
 import rospy
 import rospkg
@@ -13,7 +13,7 @@ def main():
     # cv_image = cv2.resize(cv_image,(256,256))
     try:
         bridge = CvBridge()
-        img_pub = rospy.Publisher('/camera2/raw_image', Image,queue_size=3)
+        img_pub = rospy.Publisher('/camera1/raw_image', Image,queue_size=3)
         rate = rospy.Rate(30)
 
         while not rospy.is_shutdown():
