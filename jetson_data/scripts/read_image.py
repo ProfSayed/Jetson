@@ -1,25 +1,33 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 import cv2
 import rospy
+import rospkg
 from cv_bridge import CvBridge, CvBridgeError
 from sensor_msgs.msg import Image
 
 def main():
-    cv_image = cv2.imread('~/catkin_ws/src/Jetson/jetson_data/samples/cylinder.png')   
+    rospy.init_node("Image_Publisher",anonymous=True)
+    rospack = rospkg.RosPack()
+    image_path = rospack.get_path('jetson_data') + '/samples/cyl.png'
+    cv_image = cv2.imread(image_path)   
+    # cv_image = cv2.resize(cv_image,(256,256))
     try:
-        rospy.init_node('cam_streamer')
         bridge = CvBridge()
-        img_pub = rospy.Publisher('/camera1/raw_image', Image,queue_size=3)
-        rate = rospy.Rate(1)
+        img_pub = rospy.Publisher('/camera2/raw_image', Image,queue_size=3)
+        rate = rospy.Rate(30)
 
         while not rospy.is_shutdown():
-            rospy.loginfo_once("Started Capturing")
+            rospy.loginfo_once("Publishing Image")
             try:
                 img_msg = bridge.cv2_to_imgmsg(cv_image, "bgr8")
                 img_pub.publish(img_msg)
             except CvBridgeError as e:
                 rospy.logerr(e)
 
+
+            cv2.imshow("Window",cv_image)
+            if cv2.waitKey(0) == ord('q'):
+                break
             rate.sleep()
 
     except rospy.ROSInterruptException:
