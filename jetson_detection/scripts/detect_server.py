@@ -10,7 +10,6 @@ class Process_image:
     
     def __init__(self):
         self.bridge = CvBridge()
-        self.image_sub = rospy.Subscriber('/camera1/raw_image', Image, self.img_cb)
 
     def img_cb(self,data):
         rospy.loginfo("Image Recieved")
@@ -57,6 +56,8 @@ if __name__ == "__main__":
         model.conf = 0.8
 
         proc = Process_image()
+        rospy.Subscriber('/camera1/raw_image', Image, proc.img_cb)
+
         rospy.loginfo("Ready to Process any image")
         rospy.spin()
 
