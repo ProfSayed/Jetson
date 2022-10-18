@@ -17,7 +17,7 @@ class Process_image:
         rospy.loginfo("Stage 1")
         cv_image = np.frombuffer(image_data.data, dtype=np.uint8).reshape(image_data.height, image_data.width, -1)
         rospy.loginfo("Stage 2")
-        result = self.model(cv_image, size=640)
+        result = self.model(cv_image, size=256)
         rospy.loginfo("Stage 3")
         output = result.xyxy[0].cpu().numpy().tolist()
         rospy.loginfo("Stage 4")
