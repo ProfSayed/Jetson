@@ -1,25 +1,23 @@
 #!/usr/bin/env python3
 import torch
 import rospy
+import numpy as np
 from sensor_msgs.msg import Image
-from cv_bridge import CvBridge, CvBridgeError
 
 class Process_image:
     _predictions = []
     n_frames = 0
     
     def __init__(self):
-        self.bridge = CvBridge()
-
-    def img_cb(self,data):
+        pass
+    
+    def img_cb(self,image_data):
         rospy.loginfo("Image Recieved")
         self.n_frames += 1
-        try:
-            img = self.bridge.imgmsg_to_cv2(data, "bgr8")
-        except CvBridgeError as e:
-            rospy.logerr(e)
+
+        cv_image = np.frombuffer(image_data.data, dtype=np.uint8).reshape(image_data.height, image_data.width, -1)
         
-        self.predict_fn(img)
+        self.predict_fn(cv_image)
 
         if self.n_frames >= 3:
             self.most_frequent()
