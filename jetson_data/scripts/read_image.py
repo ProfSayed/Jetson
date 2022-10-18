@@ -24,10 +24,6 @@ def main():
             except CvBridgeError as e:
                 rospy.logerr(e)
 
-
-            cv2.imshow("Window",cv_image)
-            if cv2.waitKey(0) == ord('q'):
-                break
             rate.sleep()
 
     except rospy.ROSInterruptException:
