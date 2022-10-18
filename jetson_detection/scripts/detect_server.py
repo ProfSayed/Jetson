@@ -9,7 +9,10 @@ class Process_image:
     n_frames = 0
     
     def __init__(self):
-        pass
+        ## Load Object Detection Model
+        model_path = rospy.get_param('~model_path')
+        self.model = torch.hub.load('ultralytics/yolov5', 'custom', path=model_path)  
+        self.model.conf = 0.8
 
     def img_cb(self,image_data):
         rospy.loginfo("Image Recieved")
@@ -18,6 +21,7 @@ class Process_image:
         cv_image = np.frombuffer(image_data.data, dtype=np.uint8).reshape(image_data.height, image_data.width, -1)
         
         proc_img = self.predict_fn(cv_image)
+        rospy.loginfo(proc_img)
         rospy.loginfo("Done Processing")
         # self._predictions.append(proc_img)
 
@@ -26,7 +30,7 @@ class Process_image:
 
     def predict_fn(self, image, resolution=256):
         rospy.loginfo("Processing Image")
-        result = model(image, size=resolution)
+        result = self.model(image, size=resolution)
         output = len(result.xyxy[0].cpu().numpy().tolist())
         if output > 0:
             return result.xyxy[0].cpu().numpy().tolist()[0][-1]
@@ -51,15 +55,8 @@ class Process_image:
 if __name__ == "__main__":
     try:
         rospy.init_node('detect_server')
-        ## Load Object Detection Model
-        model_path = rospy.get_param('~model_path')
-        # model = torch.hub.load('ultralytics/yolov5', 'yolov5s')  
-        model = torch.hub.load('ultralytics/yolov5', 'custom', path=model_path)  
-        model.conf = 0.8
-
         proc = Process_image()
         rospy.Subscriber('/camera1/raw_image', Image, proc.img_cb)
-
         rospy.loginfo("Ready to Process any image")
         rospy.spin()
 
