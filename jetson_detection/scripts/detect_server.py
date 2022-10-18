@@ -11,8 +11,9 @@ class Process_image:
         self.model = torch.hub.load('ultralytics/yolov5', 'custom', path=model_path)  
         self.model.conf = rospy.get_param('~model_config')
 
-    def prcoess_img(self,image_data):
+    def prcoess_img(self,req):
         rospy.loginfo("Image Recieved")
+        image_data = req.raw_image
         cv_image = np.frombuffer(image_data.data, dtype=np.uint8).reshape(image_data.height, image_data.width, -1)
         
         result = self.model(cv_image, size=256)
