@@ -5,7 +5,7 @@ from cv_bridge import CvBridge, CvBridgeError
 from sensor_msgs.msg import Image
 
 def main():
-    cv_image = cv2.imread('/home/sayed/catkin_ws/src/Jetson/jetson_data/samples/cylinder.png')   
+    cv_image = cv2.imread('~/catkin_ws/src/Jetson/jetson_data/samples/cylinder.png')   
     try:
         rospy.init_node('cam_streamer')
         bridge = CvBridge()
@@ -19,10 +19,6 @@ def main():
                 img_pub.publish(img_msg)
             except CvBridgeError as e:
                 rospy.logerr(e)
-
-            cv2.imshow('Camera1',cv_image)
-            if cv2.waitKey(1)==ord('q'):
-                break
 
             rate.sleep()
 
