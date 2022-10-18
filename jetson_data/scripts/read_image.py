@@ -10,7 +10,7 @@ def main():
     rospack = rospkg.RosPack()
     image_path = rospack.get_path('jetson_data') + '/samples/cyl.png'
     cv_image = cv2.imread(image_path)   
-    # cv_image = cv2.resize(cv_image,(256,256))
+    cv_image = cv2.resize(cv_image,(256,256))
     try:
         bridge = CvBridge()
         img_pub = rospy.Publisher('/camera1/raw_image', Image,queue_size=3)
