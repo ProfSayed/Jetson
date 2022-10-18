@@ -19,7 +19,7 @@ def main():
         while not rospy.is_shutdown():
             rospy.loginfo_once("Publishing Image")
             try:
-                img_msg = bridge.cv2_to_imgmsg(cv_image,encoding="passthrough")
+                img_msg = bridge.cv2_to_imgmsg(cv_image,encoding="bgr8")
                 img_pub.publish(img_msg)
             except CvBridgeError as e:
                 rospy.logerr(e)
