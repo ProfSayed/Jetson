@@ -23,6 +23,7 @@ class Process_image:
         rospy.loginfo("Stage 4")
         if len(output) > 0:
             rospy.loginfo("Stage 5")
+            print(output[0][-1])
             return DetectResponse(output[0][-1])
         else:
             rospy.loginfo("Stage 6")
