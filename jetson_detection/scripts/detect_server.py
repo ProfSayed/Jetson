@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 import torch
 import rospy
 from sensor_msgs.msg import Image
@@ -15,7 +15,7 @@ class Process_image:
         rospy.loginfo("Image Recieved")
         self.n_frames += 1
         try:
-            img = self.bridge.imgmsg_to_cv2(data,"bgr8")
+            img = self.bridge.imgmsg_to_cv2(data, "bgr8")
         except CvBridgeError as e:
             rospy.logerr(e)
         
