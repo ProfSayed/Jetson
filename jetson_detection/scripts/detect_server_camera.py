@@ -35,7 +35,7 @@ def most_frequent():
 
 if __name__ == "__main__":
     try:
-        rospy.init_node('cam_streamer')
+        rospy.init_node('detect_server')
         rate = rospy.Rate(20)
 
         ## Load Object Detection Model
