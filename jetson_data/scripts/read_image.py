@@ -6,7 +6,7 @@ from cv_bridge import CvBridge, CvBridgeError
 from sensor_msgs.msg import Image
 
 def main():
-    rospy.init_node("Image_Publisher",anonymous=True)
+    rospy.init_node("Image_Publisher")
     rospack = rospkg.RosPack()
     image_path = rospack.get_path('jetson_data') + '/samples/cyl.png'
     cv_image = cv2.imread(image_path)   
