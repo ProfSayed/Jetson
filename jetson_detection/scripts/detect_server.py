@@ -15,7 +15,7 @@ class Process_image:
         rospy.loginfo("Image Recieved")
         self.n_frames += 1
         try:
-            img = self.bridge.imgmsg_to_cv2(data, encoding='passthrough')
+            img = self.bridge.imgmsg_to_cv2(data,"bgr8")
         except CvBridgeError as e:
             rospy.logerr(e)
         
