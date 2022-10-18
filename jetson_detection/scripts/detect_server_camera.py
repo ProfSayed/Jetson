@@ -38,11 +38,6 @@ if __name__ == "__main__":
         rospy.init_node('detect_server')
         rate = rospy.Rate(20)
 
-        ## Load Object Detection Model
-        model_path = rospy.get_param('~model_path')
-        model = torch.hub.load('ultralytics/yolov5', 'custom', path=model_path)  
-        model.conf = 0.8
-
         ## Camera
         # Camera Display Settings
         dispW = 256
@@ -54,6 +49,12 @@ if __name__ == "__main__":
         fps = 21
         camSet='nvarguscamerasrc !  video/x-raw(memory:NVMM), width='+str(capW)+', height='+str(capH)+', format=NV12, framerate='+str(fps)+'/1 ! nvvidconv flip-method='+str(flip)+' ! video/x-raw, width='+str(dispW)+', height='+str(dispH)+', format=BGRx ! videoconvert ! video/x-raw, format=BGR ! appsink'
         cam = cv2.VideoCapture(camSet)
+
+        ## Load Object Detection Model
+        model_path = rospy.get_param('~model_path')
+        model = torch.hub.load('ultralytics/yolov5', 'custom', path=model_path)  
+        model.conf = 0.8
+
 
         while not rospy.is_shutdown():
             ret, img = cam.read()
