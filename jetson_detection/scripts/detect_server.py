@@ -10,14 +10,15 @@ class Process_image:
     
     def __init__(self):
         pass
-    
+
     def img_cb(self,image_data):
         rospy.loginfo("Image Recieved")
         self.n_frames += 1
 
         cv_image = np.frombuffer(image_data.data, dtype=np.uint8).reshape(image_data.height, image_data.width, -1)
         
-        self.predict_fn(cv_image)
+        proc_img = self.predict_fn(cv_image)
+        self._predictions.append(proc_img)
 
         if self.n_frames >= 3:
             self.most_frequent()
@@ -25,10 +26,12 @@ class Process_image:
     def predict_fn(self, image, resolution=256):
         rospy.loginfo("Processing Image")
         result = model(image, size=resolution)
-        p = -1 
-        if len(p) > 0:
-            p = result.xyxy[0].cpu().numpy().tolist()[0][-1]
-        self._predictions.append(p)
+        output = len(result.xyxy[0].cpu().numpy().tolist())
+        if output > 0:
+            return result.xyxy[0].cpu().numpy().tolist()[0][-1]
+        else:
+            return -1
+        
             
     def most_frequent(self):
         rospy.loginfo("Averaging Result")
