@@ -5,7 +5,21 @@ import smach_ros
 from sensor_msgs.msg import Image
 from jetson_msgs.msg import CountSensor
 from jetson_msgs.srv import Actuator, ActuatorRequest
-from jetson_msgs.srv import Detect, DetectRequest
+from jetson_msgs.srv import Detect
+
+class Detect_avg(smach.State):
+    def __init__(self):
+        smach.State.__init__(self, outcomes=['succeeded','more_frames'], input_keys=['has_cap'])
+        self.counter = 0
+
+    def execute(self, userdata):
+        rospy.loginfo("Cylinder has %s"%userdata.has_cap)
+        rospy.loginfo(self.counter)
+        if self.counter < 3:
+            return 'more_frames'
+        else:
+            self.counter = 0
+            return 'succeeded'
 
 def stopper_sensor_cb(ud, msg):
     rospy.loginfo('Cylinder Detected by Sensor')
@@ -16,31 +30,6 @@ def capture_img_cb(ud, msg):
     rospy.loginfo('Image Recieved')
     ud.raw_image = msg
     return True 
-
-class Detect_avg(smach.State):
-    def __init__(self):
-        smach.State.__init__(self, outcomes=['succeeded','more_frames'], input_keys=['has_cap'])
-        self.counter = 0
-
-    def execute(self, userdata):
-        rospy.loginfo("Cylinder has %s"%userdata.has_cap)
-        if self.counter < 3:
-            return 'more_frames'
-        
-        self.counter = 0
-        return 'succeeded'
-
-# class Example(smach.State):
-#     def __init__(self):
-#         smach.State.__init__(self, outcomes=['succeeded'], input_keys=['cyl_n'])
-#         self.counter = 0
-
-#     def execute(self, userdata):
-#         rospy.loginfo(userdata.cyl_n)
-#         rospy.loginfo('Object Detection Initalized')
-#         rospy.sleep(2)
-#         return 'succeeded'
-
 
 
 ### ==================== main ==================== ###
