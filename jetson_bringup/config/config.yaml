@@ -19,10 +19,10 @@ pusher_server:
   gpio: 21
   topic_name: pusher_action
   delay_action: 2.0 #in seconds
-# -------------------------
-# Pusher Queue Server
-push_action_server:
-  server_name: pusher_queue_server
+# # -------------------------
+# # Pusher Queue Server
+# push_action_server:
+#   server_name: pusher_queue_server
 # -------------------------
 # Object Detection Action Server
 detect_server:
