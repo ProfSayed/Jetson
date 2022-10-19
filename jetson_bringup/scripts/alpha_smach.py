@@ -9,7 +9,7 @@ from jetson_msgs.srv import Detect
 
 class Detect_avg(smach.State):
     def __init__(self):
-        smach.State.__init__(self, outcomes=['succeeded','more_frames'], input_keys=['counter','has_cap'],output_keys=['avg_cap'])
+        smach.State.__init__(self, outcomes=['succeeded','more_frames'], input_keys=['counter','has_cap'],output_keys=['counter','avg_cap'])
 
     def execute(self, ud):
         rospy.loginfo("Cylinder has %s"% ud.has_cap)
