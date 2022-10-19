@@ -12,7 +12,8 @@ def stopper_sensor_cb(ud, msg):
     return True 
     
 def capture_img_cb(ud, msg):
-    rospy.loginfo('Cylinder Detected by Sensor')
+    rospy.loginfo('Image Recieved')
+    ud.raw_img = msg
     return True 
 
 # class Example(smach.State):
@@ -43,8 +44,8 @@ def main():
     sm_detect = smach.StateMachine(outcomes=['succeeded','preempted','aborted'])
     detect_service_name = rospy.get_param('/detect_server/topic_name')
     with sm_detect:
-        smach.StateMachine.add('CAP_FRAME', smach_ros.MonitorState("/sm_reset", Image, capture_img_cb, 1), transitions={'invalid':'CAP_FRAME', 'valid':'DETECT_FRAME'})
-        smach.StateMachine.add('DETECT_FRAME' , smach_ros.ServiceState(detect_service_name, Detect , request=), transitions={'succeeded':''})
+        smach.StateMachine.add('CAP_FRAME', smach_ros.MonitorState("/sm_reset", Image, capture_img_cb, 1, output_keys=['raw_img']), transitions={'invalid':'CAP_FRAME', 'valid':'DETECT_FRAME'})
+        smach.StateMachine.add('DETECT_FRAME' , smach_ros.ServiceState(detect_service_name, Detect , request=DetectRequest(sm_detect.userdata.raw_img)))
 
     # Create a SMACH state machine
     sm_top = smach.StateMachine(outcomes=['succeeded','preempted','aborted'])
