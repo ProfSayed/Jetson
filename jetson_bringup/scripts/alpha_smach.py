@@ -64,14 +64,14 @@ def main():
     detect_service_name = rospy.get_param('/detect_server/topic_name')
     with sm_detect:
         smach.StateMachine.add('CAP_FRAME', smach_ros.MonitorState(raw_img_topic_name, Image, capture_img_cb, 1, output_keys=['raw_image']), transitions={'invalid':'CAP_FRAME', 'valid':'DETECT_FRAME'})
-        smach.StateMachine.add('DETECT_FRAME' , smach_ros.ServiceState(detect_service_name, Detect , request_slots=['raw_image'], output_keys=['has_cap']))
+        smach.StateMachine.add('DETECT_FRAME' , smach_ros.ServiceState(detect_service_name, Detect , request_slots=['raw_image']), output_keys=['has_cap'], transitions={'succeeded':'DETECT_AVG'})
         smach.StateMachine.add('DETECT_AVG',Detect_avg(), transitions={'succeeded':'succeeded'})
 
     # Create a SMACH state machine
     sm_top = smach.StateMachine(outcomes=['succeeded','preempted','aborted'])
     with sm_top:
         smach.StateMachine.add('RESET',sm_reset, transitions={'succeeded':'MONITOR_SS'})
-        smach.StateMachine.add('MONITOR_SS', smach_ros.MonitorState(ss_topic_name, CountSensor, stopper_sensor_cb, 1, output_keys=['cyl_n']), transitions={'invalid':'MONITOR_SS', 'valid':'STOPPER_ACTION'})
+        smach.StateMachine.add('MONITOR_SS', smach_ros.MonitorState(ss_topic_name, CountSensor, stopper_sensor_cb, 1, output_keys=['cylinder_number']), transitions={'invalid':'MONITOR_SS', 'valid':'STOPPER_ACTION'})
         smach.StateMachine.add('STOPPER_ACTION', smach_ros.ServiceState(stopper_service_name, Actuator, request=ActuatorRequest(True)), transitions={'succeeded':'DETECT'})
         smach.StateMachine.add('DETECT',sm_detect, transitions={'succeeded':'RELEASE_STOPPER'})
         smach.StateMachine.add('RELEASE_STOPPER', smach_ros.ServiceState(stopper_service_name, Actuator, request=ActuatorRequest(False)))
