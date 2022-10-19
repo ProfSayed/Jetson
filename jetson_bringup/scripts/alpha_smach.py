@@ -17,7 +17,7 @@ class Detect_avg(smach.State):
         ud.counter += 1
         if ud.counter < 10:
             return 'more_frames'
-        else:
+        else:    
             ud.counter = 0
             return 'succeeded'
 
