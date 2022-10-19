@@ -10,13 +10,13 @@ pusher_sensor:
   topic_name: pusher_count
 # -------------------------
 # Actuator Servers
-## Note BCM is the Pin Numbering System
+## Note BOARD is the Pin Numbering System
 stopper_server: 
-  gpio: 17
+  gpio: 19
   topic_name: stopper_action
   delay_action: 2.0 #in seconds
 pusher_server: 
-  gpio: 22
+  gpio: 21
   topic_name: pusher_action
   delay_action: 2.0 #in seconds
 # -------------------------

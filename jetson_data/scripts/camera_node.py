@@ -8,8 +8,8 @@ def main():
     try:
         rospy.init_node('cam_streamer')
         bridge = CvBridge()
-        img_pub = rospy.Publisher('/camera1/raw_image', Image,queue_size=3)
-        rate = rospy.Rate(1)
+        img_pub = rospy.Publisher('/camera1/raw_image', Image,queue_size=10)
+        rate = rospy.Rate(21)
 
         ## Camera
         # Camera Display Settings

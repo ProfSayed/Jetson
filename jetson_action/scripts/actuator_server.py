@@ -16,7 +16,7 @@ if __name__ == "__main__":
         delay_secs = rospy.get_param('~delay_action')
         ## Initialize gpio
         actuator_pin = rospy.get_param('~gpio')
-        GPIO.setmode(GPIO.BCM)
+        GPIO.setmode(GPIO.BOARD)
         GPIO.setup(actuator_pin, GPIO.OUT, initial=GPIO.LOW)
         ## Start Server
         rospy.Service(topic_name, Actuator, actuate_cb)
