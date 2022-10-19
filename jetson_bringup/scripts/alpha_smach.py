@@ -24,7 +24,6 @@ class Detect_avg(smach.State):
 
     def execute(self, userdata):
         rospy.loginfo(userdata.has_cap)
-        rospy.loginfo('Object Detection Initalized')
         rospy.sleep(2)
         return 'succeeded'
 
@@ -64,7 +63,7 @@ def main():
     detect_service_name = rospy.get_param('/detect_server/topic_name')
     with sm_detect:
         smach.StateMachine.add('CAP_FRAME', smach_ros.MonitorState(raw_img_topic_name, Image, capture_img_cb, 1, output_keys=['raw_image']), transitions={'invalid':'CAP_FRAME', 'valid':'DETECT_FRAME'})
-        smach.StateMachine.add('DETECT_FRAME' , smach_ros.ServiceState(detect_service_name, Detect , request_slots=['raw_image']), output_keys=['has_cap'], transitions={'succeeded':'DETECT_AVG'})
+        smach.StateMachine.add('DETECT_FRAME' , smach_ros.ServiceState(detect_service_name, Detect , request_slots=['raw_image'], response_slots=['has_cap']), transitions={'succeeded':'DETECT_AVG'})
         smach.StateMachine.add('DETECT_AVG',Detect_avg(), transitions={'succeeded':'succeeded'})
 
     # Create a SMACH state machine
