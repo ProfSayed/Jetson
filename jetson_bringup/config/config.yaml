@@ -24,6 +24,9 @@ pusher_server:
 # push_action_server:
 #   server_name: pusher_queue_server
 # -------------------------
+# Camera Capture Topic
+raw_image_topic_name: raw_image
+# -------------------------
 # Object Detection Action Server
 detect_server:
   topic_name: object_detection

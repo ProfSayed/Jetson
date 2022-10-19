@@ -13,7 +13,7 @@ def main():
     cv_image = cv2.resize(cv_image,(256,256))
     try:
         bridge = CvBridge()
-        img_pub = rospy.Publisher('/camera1/raw_image', Image,queue_size=3)
+        img_pub = rospy.Publisher('raw_image', Image,queue_size=3)
         rate = rospy.Rate(30)
 
         while not rospy.is_shutdown():
@@ -21,7 +21,6 @@ def main():
             try:
                 img_msg = bridge.cv2_to_imgmsg(cv_image,"bgr8")
                 img_pub.publish(img_msg)
-                rospy.loginfo(img_msg.data)
             except CvBridgeError as e:
                 rospy.logerr(e)
 

@@ -6,9 +6,9 @@ from sensor_msgs.msg import Image
 
 def main():
     try:
-        rospy.init_node('cam_streamer')
+        rospy.init_node('cam_stream')
         bridge = CvBridge()
-        img_pub = rospy.Publisher('/camera1/raw_image', Image,queue_size=10)
+        img_pub = rospy.Publisher('raw_image', Image,queue_size=10)
         rate = rospy.Rate(21)
 
         ## Camera
