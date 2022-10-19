@@ -26,9 +26,9 @@ class Detect_avg(smach.State):
         rospy.loginfo("Cylinder has %s"%userdata.has_cap)
         if self.counter < 3:
             return 'more_frames'
-        else:
-            self.counter = 0
-            return 'succeeded'
+        
+        self.counter = 0
+        return 'succeeded'
 
 # class Example(smach.State):
 #     def __init__(self):
