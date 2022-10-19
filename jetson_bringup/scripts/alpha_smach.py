@@ -9,16 +9,16 @@ from jetson_msgs.srv import Detect
 
 class Detect_avg(smach.State):
     def __init__(self):
-        smach.State.__init__(self, outcomes=['succeeded','more_frames'], input_keys=['has_cap'])
-        self.counter = 0
+        smach.State.__init__(self, outcomes=['succeeded','more_frames'], input_keys=['has_cap'],output_keys=['avg_cap'])
 
-    def execute(self, userdata):
-        rospy.loginfo("Cylinder has %s"%userdata.has_cap)
-        rospy.loginfo(self.counter)
-        if self.counter < 3:
+    def execute(self, ud):
+        rospy.loginfo("Cylinder has %s"% ud.has_cap)
+        rospy.loginfo(ud.counter)
+        ud.counter += 1
+        if ud.counter < 10:
             return 'more_frames'
         else:
-            self.counter = 0
+            ud.counter = 0
             return 'succeeded'
 
 def stopper_sensor_cb(ud, msg):
@@ -43,7 +43,6 @@ def main():
     pusher_service_name = rospy.get_param('/pusher_server/topic_name')
     stopper_service_name = rospy.get_param('/stopper_server/topic_name')
 
-
     ## RESET Group
     sm_reset = smach.StateMachine(outcomes=['succeeded','preempted','aborted'])
     with sm_reset:
@@ -54,6 +53,7 @@ def main():
     sm_detect = smach.StateMachine(outcomes=['succeeded','preempted','aborted'])
     detect_service_name = rospy.get_param('/detect_server/topic_name')
     with sm_detect:
+        sm_detect.userdata.counter = 0
         smach.StateMachine.add('CAP_FRAME', smach_ros.MonitorState(raw_img_topic_name, Image, capture_img_cb, 1, output_keys=['raw_image']), transitions={'invalid':'CAP_FRAME', 'valid':'DETECT_FRAME'})
         smach.StateMachine.add('DETECT_FRAME' , smach_ros.ServiceState(detect_service_name, Detect , request_slots=['raw_image'], response_slots=['has_cap']), transitions={'succeeded':'DETECT_AVG'})
         smach.StateMachine.add('DETECT_AVG',Detect_avg(), transitions={'more_frames':'CAP_FRAME','succeeded':'succeeded'})
@@ -73,7 +73,6 @@ def main():
     sm_top.execute()
     rospy.spin()
     sis.stop()
-
 
 if __name__ == '__main__':
     main()
