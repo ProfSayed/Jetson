@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from unittest import result
 import rospy
 import smach
 import smach_ros
@@ -9,16 +10,24 @@ from jetson_msgs.srv import Detect
 
 class Detect_avg(smach.State):
     def __init__(self):
-        smach.State.__init__(self, outcomes=['succeeded','more_frames'], input_keys=['counter','has_cap'],output_keys=['counter','avg_cap'])
+        smach.State.__init__(self, outcomes=['succeeded','more_frames'], input_keys=['counter','has_cap','result_list'],output_keys=['counter','has_cap_result','result_list'])
 
     def execute(self, ud):
-        rospy.loginfo("Cylinder has %s"% ud.has_cap)
-        rospy.loginfo(ud.counter)
-        ud.counter += 1
         if ud.counter < 10:
+            ud.counter += 1
+            ud.result_list.append(ud.has_cap)
             return 'more_frames'
         else:    
+            cnt = 0
+            n = ud.result_list[0]
+            for i in ud.result_list:
+                curr_freq = ud.result_list.count(i)
+                if curr_freq > cnt:
+                    cnt = curr_freq
+                    n = i
+            ## Result
             ud.counter = 0
+            ud.has_cap_result = n
             return 'succeeded'
 
 def stopper_sensor_cb(ud, msg):
@@ -54,6 +63,7 @@ def main():
     detect_service_name = rospy.get_param('/detect_server/topic_name')
     with sm_detect:
         sm_detect.userdata.counter = 0
+        sm_detect.userdata.result_list = []
         smach.StateMachine.add('CAP_FRAME', smach_ros.MonitorState(raw_img_topic_name, Image, capture_img_cb, 1, output_keys=['raw_image']), transitions={'invalid':'CAP_FRAME', 'valid':'DETECT_FRAME'})
         smach.StateMachine.add('DETECT_FRAME' , smach_ros.ServiceState(detect_service_name, Detect , request_slots=['raw_image'], response_slots=['has_cap']), transitions={'succeeded':'DETECT_AVG'})
         smach.StateMachine.add('DETECT_AVG',Detect_avg(), transitions={'more_frames':'CAP_FRAME','succeeded':'succeeded'})
