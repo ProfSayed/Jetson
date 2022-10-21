@@ -20,11 +20,12 @@ pusher_server:
 # -------------------------
 # Timers
 timers: 
-  t_sensor_stopper: 0.0         #1
-  t_detection_reset : 0.0       #2
-  t_stopper_reactivation: 5.0   #3
-  t_sensor_pusher : 4.0         #4
-  t_pusher_reset  : 3.0         #5
+  timer_1 : 0.0         
+  timer_2 : 0.0      
+  timer_3 : 5.0  
+  timer_4 : 4.0        
+  timer_5 : 3.0        
+  timer_6 : 3.0      
 # -------------------------
 # Camera Capture Topic
 raw_image_topic_name: raw_image
