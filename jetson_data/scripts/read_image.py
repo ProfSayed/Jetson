@@ -13,7 +13,8 @@ def main():
     cv_image = cv2.resize(cv_image,(256,256))
     try:
         bridge = CvBridge()
-        img_pub = rospy.Publisher('raw_image', Image,queue_size=3)
+        topic_name = rospy.get_param('/raw_image_topic_name')
+        img_pub = rospy.Publisher(topic_name, Image,queue_size=1)
         rate = rospy.Rate(30)
 
         while not rospy.is_shutdown():

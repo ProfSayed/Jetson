@@ -39,6 +39,7 @@ class If_cap(smach.State):
         else:
             return "no_cap"
 
+
 def stopper_sensor_cb(ud, msg):
     rospy.loginfo('Cylinder Detected by Sensor')
     ud.cylinder_number = msg.cylinder_number
@@ -55,17 +56,29 @@ def capture_img_cb(ud, msg):
     ud.raw_image = msg
     return True 
 
+@smach.cb_interface(outcomes=['succeeded'])
+def timer_cb(ud,t):
+    rospy.sleep(t)
+    return 'succeeded'
 
 ### ==================== main ==================== ###
 def main():
     rospy.init_node('alpha_smach')
 
     ## Params
+    # Topics
     raw_img_topic_name = rospy.get_param('/raw_image_topic_name')
     ss_topic_name = rospy.get_param('/stopper_sensor/topic_name')
     ps_topic_name = rospy.get_param('/pusher_sensor/topic_name')
+    # Services
     pusher_service_name = rospy.get_param('/pusher_server/topic_name')
     stopper_service_name = rospy.get_param('/stopper_server/topic_name')
+    # Timers
+    t_sensor_stopper = rospy.get_param('/timers/t_sensor_stopper')
+    t_detection_reset = rospy.get_param('/timers/t_detection_reset')
+    t_stopper_reactivation = rospy.get_param('/timers/t_stopper_reactivation')
+    t_sensor_pusher = rospy.get_param('/timers/t_sensor_pusher')
+    t_pusher_reset = rospy.get_param('/timers/t_pusher_reset')
 
     ## RESET Group
     sm_reset = smach.StateMachine(outcomes=['succeeded','preempted','aborted'])
@@ -87,20 +100,25 @@ def main():
     ## PUSH Group
     sm_push = smach.StateMachine(outcomes=['succeeded','preempted','aborted'], input_keys=['cylinder_number'])
     with sm_push:
-        smach.StateMachine.add('RELEASE_STOPPER', smach_ros.ServiceState(stopper_service_name, Actuator, request=ActuatorRequest(False)), transitions={'succeeded':'STOPPER_ACTION'})
+        smach.StateMachine.add('RELEASE_STOPPER', smach_ros.ServiceState(stopper_service_name, Actuator, request=ActuatorRequest(False)), transitions={'succeeded':'TIMER3'})
+        smach.StateMachine.add('TIMER3',smach.CBState(timer_cb,[t_stopper_reactivation]), transitions={'succeeded':'STOPPER_ACTION'})
         smach.StateMachine.add('STOPPER_ACTION', smach_ros.ServiceState(stopper_service_name, Actuator, request=ActuatorRequest(True)), transitions={'succeeded':'MONITOR_PS'})
-        smach.StateMachine.add('MONITOR_PS', smach_ros.MonitorState(ps_topic_name, CountSensor, pusher_sensor_cb, 1), transitions={'invalid':'MONITOR_PS', 'valid':'PUSHER_ACTION'})
+        smach.StateMachine.add('MONITOR_PS', smach_ros.MonitorState(ps_topic_name, CountSensor, pusher_sensor_cb, 1), transitions={'invalid':'MONITOR_PS', 'valid':'TIMER4'})
+        smach.StateMachine.add('TIMER4',smach.CBState(timer_cb,[t_sensor_pusher]), transitions={'succeeded':'PUSHER_ACTION'})
         smach.StateMachine.add('PUSHER_ACTION', smach_ros.ServiceState(pusher_service_name, Actuator, request=ActuatorRequest(True)))
     
     ## Parent State
     sm_top = smach.StateMachine(outcomes=['succeeded','preempted','aborted'])
     with sm_top:
         smach.StateMachine.add('RESET',sm_reset, transitions={'succeeded':'MONITOR_SS'})
-        smach.StateMachine.add('MONITOR_SS', smach_ros.MonitorState(ss_topic_name, CountSensor, stopper_sensor_cb, 1, output_keys=['cylinder_number']), transitions={'invalid':'MONITOR_SS', 'valid':'STOPPER_ACTION'})
+        smach.StateMachine.add('MONITOR_SS', smach_ros.MonitorState(ss_topic_name, CountSensor, stopper_sensor_cb, 1, output_keys=['cylinder_number']), transitions={'invalid':'MONITOR_SS', 'valid':'TIMER1'})
+        smach.StateMachine.add('TIMER1',smach.CBState(timer_cb,[t_sensor_stopper]), transitions={'succeeded':'STOPPER_ACTION'})
         smach.StateMachine.add('STOPPER_ACTION', smach_ros.ServiceState(stopper_service_name, Actuator, request=ActuatorRequest(True)), transitions={'succeeded':'DETECT'})
-        smach.StateMachine.add('DETECT',sm_detect, transitions={'succeeded':'IF_CAP'})
+        smach.StateMachine.add('DETECT',sm_detect, transitions={'succeeded':'TIMER2'})
+        smach.StateMachine.add('TIMER2',smach.CBState(timer_cb,[t_detection_reset]), transitions={'succeeded':'IF_CAP'})
         smach.StateMachine.add('IF_CAP',If_cap(), transitions={'has_cap':'RESET','no_cap':"PUSH"})
-        smach.StateMachine.add('PUSH',sm_push, transitions={'succeeded':'RESET'})
+        smach.StateMachine.add('PUSH',sm_push, transitions={'succeeded':'TIMER5'})
+        smach.StateMachine.add('TIMER5',smach.CBState(timer_cb,[t_pusher_reset]), transitions={'succeeded':'RESET'})
     
     # Create and start the introspection server
     sis = smach_ros.IntrospectionServer(rospy.get_name(), sm_top, '/JETSON_SYS')
