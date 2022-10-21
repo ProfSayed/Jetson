@@ -45,9 +45,10 @@ def stopper_sensor_cb(ud, msg):
     return True 
     
 def pusher_sensor_cb(ud, msg):
-    rospy.loginfo('Cylinder Detected by Sensor')
-    ud.cylinder_number = msg.cylinder_number
-    return True 
+    rospy.loginfo('Cylinder %s Detected by Sensor' % msg.cylinder_number)
+    if ud.cylinder_number == msg.cylinder_number:
+        return True 
+    return False
     
 def capture_img_cb(ud, msg):
     rospy.loginfo('Image Recieved')
@@ -84,14 +85,14 @@ def main():
         smach.StateMachine.add('DETECT_AVG',Detect_avg(), transitions={'more_frames':'CAP_FRAME','succeeded':'succeeded'})
 
     ## PUSH Group
-    sm_push = smach.StateMachine(outcomes=['succeeded','preempted','aborted'])
+    sm_push = smach.StateMachine(outcomes=['succeeded','preempted','aborted'], input_keys=['cylinder_number'])
     with sm_push:
         smach.StateMachine.add('RELEASE_STOPPER', smach_ros.ServiceState(stopper_service_name, Actuator, request=ActuatorRequest(False)), transitions={'succeeded':'STOPPER_ACTION'})
         smach.StateMachine.add('STOPPER_ACTION', smach_ros.ServiceState(stopper_service_name, Actuator, request=ActuatorRequest(True)), transitions={'succeeded':'MONITOR_PS'})
-        smach.StateMachine.add('MONITOR_PS', smach_ros.MonitorState(ps_topic_name, CountSensor, pusher_sensor_cb, 1, output_keys=['cylinder_number']), transitions={'invalid':'MONITOR_PS', 'valid':'PUSHER_ACTION'})
+        smach.StateMachine.add('MONITOR_PS', smach_ros.MonitorState(ps_topic_name, CountSensor, pusher_sensor_cb, 1), transitions={'invalid':'MONITOR_PS', 'valid':'PUSHER_ACTION'})
         smach.StateMachine.add('PUSHER_ACTION', smach_ros.ServiceState(pusher_service_name, Actuator, request=ActuatorRequest(True)))
     
-    #  Parent State
+    ## Parent State
     sm_top = smach.StateMachine(outcomes=['succeeded','preempted','aborted'])
     with sm_top:
         smach.StateMachine.add('RESET',sm_reset, transitions={'succeeded':'MONITOR_SS'})
