@@ -3,6 +3,7 @@
 sudo pip3 install rospkg catkin_pkg
 sudo pip3 install --upgrade adafruit_blinka
 sudo apt-get install ros-melodic-image-transport ros-melodic-vision-msgs
+sudo apt-get install ros-melodic-smach ros-melodic-smach-ros ros-melodic-executive-smach ros-melodic-smach-viewer
 ```
 ## Create the workspace and download the repo
 ```bash  

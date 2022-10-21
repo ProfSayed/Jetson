@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- Init Parameters -->
+    <include file="$(find jetson_bringup)/launch/init_param.launch"/>
+    
+    <!-- Start the central unit -->.
+    <node name="alpha_node" pkg="jetson_bringup" type="alpha_smach.py" output="screen"/>
+
+    <!-- Start Camera -->
+    <node name="camera_node" pkg="jetson_data" type="camera_node.py"/>
+
+</launch>

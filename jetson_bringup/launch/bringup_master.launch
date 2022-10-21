@@ -3,15 +3,9 @@
     <!-- Init Parameters -->
     <include file="$(find jetson_bringup)/launch/init_param.launch"/>
     
-    <!-- Start the central unit -->.
-    <node name="alpha_node" pkg="jetson_bringup" type="alpha_smach.py" output="screen"/>
-
     <!-- Start Sensors Counting -->
     <node name="stopper_sensor" pkg="jetson_data" type="count_sensor.py" />
     <node name="pusher_sensor"  pkg="jetson_data" type="count_sensor.py" />
-
-    <!-- Start Camera -->
-    <node name="camera_node" pkg="jetson_data" type="camera_node.py"/>
 
     <!-- Start Object Detection -->
     <node name="detect_server" pkg="jetson_detection" type="detect_server.py"/>

@@ -114,6 +114,7 @@ def main():
         smach.StateMachine.add('MONITOR_SS', smach_ros.MonitorState(ss_topic_name, CountSensor, stopper_sensor_cb, 1, output_keys=['cylinder_number']), transitions={'invalid':'MONITOR_SS', 'valid':'TIMER1'})
         smach.StateMachine.add('TIMER1',smach.CBState(timer_cb,[t_sensor_stopper]), transitions={'succeeded':'STOPPER_ACTION'})
         smach.StateMachine.add('STOPPER_ACTION', smach_ros.ServiceState(stopper_service_name, Actuator, request=ActuatorRequest(True)), transitions={'succeeded':'DETECT'})
+        smach.StateMachine.add('TIMER',smach.CBState(timer_cb,[t_sensor_stopper]), transitions={'succeeded':'STOPPER_ACTION'})
         smach.StateMachine.add('DETECT',sm_detect, transitions={'succeeded':'TIMER2'})
         smach.StateMachine.add('TIMER2',smach.CBState(timer_cb,[t_detection_reset]), transitions={'succeeded':'IF_CAP'})
         smach.StateMachine.add('IF_CAP',If_cap(), transitions={'has_cap':'RESET','no_cap':"PUSH"})
