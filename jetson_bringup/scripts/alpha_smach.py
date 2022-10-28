@@ -96,6 +96,7 @@ def main():
     detect_service_name = rospy.get_param('/detect_server/topic_name')
     with sm_detect:
         sm_detect.userdata.counter = 0
+        sm_detect.userdata.has_cap_result = -1
         sm_detect.userdata.n_frames = n_frames
         sm_detect.userdata.result_list = []
         smach.StateMachine.add('CAP_FRAME', smach_ros.MonitorState(raw_img_topic_name, Image, capture_img_cb, 1, output_keys=['raw_image']), transitions={'invalid':'CAP_FRAME', 'valid':'DETECT_FRAME'})
