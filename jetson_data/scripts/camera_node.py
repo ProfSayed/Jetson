@@ -14,8 +14,8 @@ def main():
 
         ## Camera
         # Camera Display Settings
-        dispW = 410
-        dispH = 308
+        dispW = 256
+        dispH = 256
         flip  = 2 ## 0 or 2
         # Camera Capture Settings
         capW = 3264
