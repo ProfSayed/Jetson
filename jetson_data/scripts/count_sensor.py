@@ -37,10 +37,10 @@ def main():
                 new_cylinder = False
                 index += 1
 
-                ## Publish Message
-                msg.time_stamp = rospy.Time.now()
-                msg.cylinder_number = index
-                pub.publish(msg)
+            ## Publish Message
+            msg.time_stamp = rospy.Time.now()
+            msg.cylinder_number = index
+            pub.publish(msg)
         
         ## Check for Overflow
         if ina219.overflow:
