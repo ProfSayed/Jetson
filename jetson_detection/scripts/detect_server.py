@@ -19,6 +19,7 @@ class Process_image:
         result = self.model(cv_image, size=256)
         output = result.xyxy[0].cpu().numpy().tolist()
         if len(output) > 0:
+            rospy.loginfo(int(output[0][-1]))
             return DetectResponse(int(output[0][-1]))
         else:
             return DetectResponse(-1)
