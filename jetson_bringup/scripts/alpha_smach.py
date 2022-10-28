@@ -15,6 +15,7 @@ class Detect_max(smach.State):
         if ud.counter < ud.n_frames:
             ud.counter += 1
             ud.result_list.append(ud.has_cap)
+            rospy.loginfo("Detected Cylinder: %s"%has_cap)
             return 'more_frames'
         else:    
             cnt = 0
@@ -27,7 +28,7 @@ class Detect_max(smach.State):
             ## Result
             ud.counter = 0
             ud.has_cap_result = n
-            rospy.loginfo("Detected Cylinder: %s"%n)
+            rospy.loginfo("Detected Cylinder Total: %s"%n)
             return 'succeeded'
 
 class If_cap(smach.State):
