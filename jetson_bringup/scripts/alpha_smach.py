@@ -12,32 +12,45 @@ class Detect_max(smach.State):
         smach.State.__init__(self, outcomes=['succeeded','more_frames'], input_keys=['n_frames','counter','has_cap','result_list'],output_keys=['counter','has_cap_result','result_list'])
 
     def execute(self, ud):
-        if ud.counter < ud.n_frames:
+        if ud.counter == 50:
+            ud.has_cap_result = -1
+            return 'succeeded' 
+
+        if ud.has_cap == -1:
             ud.counter += 1
-            if ud.has_cap != -1:
-                ud.result_list.append(ud.has_cap)
-                rospy.loginfo("Detected Cylinder: %s"%ud.has_cap)
             return 'more_frames'
-        else:    
-            cnt = 0
-            n = ud.result_list[0]
-            for i in ud.result_list:
-                curr_freq = ud.result_list.count(i)
-                if curr_freq > cnt:
-                    cnt = curr_freq
-                    n = i
-            ## Result
+        else:   
             ud.counter = 0
-            ud.has_cap_result = n
-            rospy.loginfo("Detected Cylinder Total: %s"%n)
+            ud.has_cap_result = ud.has_cap
+            rospy.loginfo("Detected Cylinder: %s" %ud.has_cap_result)
             return 'succeeded'
+
+    # def execute(self, ud):
+    #     if ud.counter < ud.n_frames:
+    #         ud.counter += 1
+    #         if ud.has_cap != -1:
+    #             ud.result_list.append(ud.has_cap)
+    #             rospy.loginfo("Detected Cylinder: %s"%ud.has_cap)
+    #         return 'more_frames'
+    #     else:    
+    #         cnt = 0
+    #         n = ud.result_list[0]
+    #         for i in ud.result_list:
+    #             curr_freq = ud.result_list.count(i)
+    #             if curr_freq > cnt:
+    #                 cnt = curr_freq
+    #                 n = i
+    #         ## Result
+    #         ud.counter = 0
+    #         ud.has_cap_result = n
+    #         rospy.loginfo("Detected Cylinder Total: %s"%n)
+    #         return 'succeeded'
 
 class If_cap(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['has_cap','no_cap'],input_keys=['has_cap_result'])
 
     def execute(self, ud):
-        rospy.loginfo("Decideing Cylinder: %s"%ud.has_cap_result)
         if ud.has_cap_result == 0:
             return "has_cap"
         else:
