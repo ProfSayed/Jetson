@@ -10,7 +10,7 @@ if __name__ == "__main__":
         rospy.init_node('detect_client')
         ## Prepare image
         rospack = rospkg.RosPack()
-        image_path = rospack.get_path('jetson_detection') + '/samples/cyl.png'
+        image_path = rospack.get_path('jetson_detection') + '/samples/cap.jpg'
         cv_image = cv2.imread(image_path)   
         cv_image = cv2.resize(cv_image,(256,256))
         bridge = CvBridge()
