@@ -23,11 +23,11 @@ class Process_image:
             cv_image = self.bridge.imgmsg_to_cv2(image_data, "bgr8")
         except CvBridgeError as e:
             rospy.ERROR(e)
-            
+
         result = self.model(cv_image, size=256)
         output = result.xyxy[0].cpu().numpy().tolist()
         if len(output) > 0:
-            rospy.loginfo(int(output[0][-1]))
+            rospy.loginfo("Result: %d" %int(output[0][-1]))
             return DetectResponse(int(output[0][-1]))
         else:
             return DetectResponse(-1)
