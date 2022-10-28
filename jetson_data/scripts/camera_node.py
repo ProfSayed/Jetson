@@ -14,13 +14,13 @@ def main():
 
         ## Camera
         # Camera Display Settings
-        dispW = 1280
-        dispH = 720
-        flip  = 0 ## 0 or 2
+        dispW = 410
+        dispH = 308
+        flip  = 2 ## 0 or 2
         # Camera Capture Settings
-        capW = 1280
-        capH = 720
-        fps = 120
+        capW = 3264
+        capH = 1848
+        fps = 28
         camSet='nvarguscamerasrc !  video/x-raw(memory:NVMM), width='+str(capW)+', height='+str(capH)+', format=NV12, framerate='+str(fps)+'/1 ! nvvidconv flip-method='+str(flip)+' ! video/x-raw, width='+str(dispW)+', height='+str(dispH)+', format=BGRx ! videoconvert ! video/x-raw, format=BGR ! appsink'
         cam = cv2.VideoCapture(camSet)
 
