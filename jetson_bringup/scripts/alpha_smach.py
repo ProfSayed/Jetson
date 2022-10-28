@@ -9,7 +9,7 @@ from jetson_msgs.srv import Detect
 
 class Detect_max(smach.State):
     def __init__(self):
-        smach.State.__init__(self, outcomes=['succeeded','more_frames'], input_keys=['n_frames','counter','has_cap','result_list'],output_keys=['counter','has_cap_result','result_list'])
+        smach.State.__init__(self, outcomes=['succeeded','more_frames'], input_keys=['n_frames','counter','has_cap','has_cap_result','result_list'],output_keys=['counter','has_cap_result','result_list'])
 
     def execute(self, ud):
         if ud.counter < ud.n_frames:
@@ -27,7 +27,7 @@ class Detect_max(smach.State):
             ## Result
             ud.counter = 0
             ud.has_cap_result = n
-            rospy.loginfo("Cylinder: %s"%ud.has_cap_result)
+            rospy.loginfo("Detected Cylinder: %s"%n)
             return 'succeeded'
 
 class If_cap(smach.State):
@@ -35,6 +35,7 @@ class If_cap(smach.State):
         smach.State.__init__(self, outcomes=['has_cap','no_cap'],input_keys=['has_cap_result'])
 
     def execute(self, ud):
+        rospy.loginfo("Decideing Cylinder: %s"%ud.has_cap_result)
         if ud.has_cap_result == 1:
             return "has_cap"
         else:
