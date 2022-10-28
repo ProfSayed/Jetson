@@ -1,7 +1,7 @@
 # Sensors Topics
 initial_cylinder_index: 0
 sensor_current_threshold: 2
-frequency: 30 #hz
+frequency: 10 #hz
 stopper_sensor: 
   i2c_address: 0x40
   topic_name: stopper_count
