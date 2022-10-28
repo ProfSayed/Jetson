@@ -13,7 +13,7 @@ class Detect_max(smach.State):
 
     def execute(self, ud):
         if ud.counter == 50:
-            ud.has_cap_result = -1
+            ud.has_cap_result = 0
             return 'succeeded' 
 
         if ud.has_cap == -1:
