@@ -36,7 +36,7 @@ class If_cap(smach.State):
 
     def execute(self, ud):
         rospy.loginfo("Decideing Cylinder: %s"%ud.has_cap_result)
-        if ud.has_cap_result == 1:
+        if ud.has_cap_result == 0:
             return "has_cap"
         else:
             return "no_cap"
