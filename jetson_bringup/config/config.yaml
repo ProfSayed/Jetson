@@ -20,12 +20,12 @@ pusher_server:
 # -------------------------
 # Timers
 timers: 
-  timer_1 : 1.0         
-  timer_2 : 2.0      
-  timer_3 : 2.0  
-  timer_4 : 2.0        
-  timer_5 : 1.0        
-  timer_6 : 5.0      
+  timer_1 : 0.5         
+  timer_2 : 1.0      
+  timer_3 : 0.5  
+  timer_4 : 0.5        
+  timer_5 : 0.2        
+  timer_6 : 1.0      
 # -------------------------
 # Camera Capture Topic
 raw_image_topic_name: raw_image
