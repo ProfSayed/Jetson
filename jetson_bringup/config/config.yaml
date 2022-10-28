@@ -23,7 +23,7 @@ timers:
   timer_1 : 0.2       
   timer_2 : 1.0      
   timer_3 : 0.5  
-  timer_4 : 0.5        
+  timer_4 : 0.6        
   timer_5 : 0.2        
   timer_6 : 1.0      
 # -------------------------
