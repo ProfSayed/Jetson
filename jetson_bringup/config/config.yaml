@@ -15,7 +15,7 @@ stopper_server:
   gpio: 17
   topic_name: stopper_action
 pusher_server: 
-  gpio: 22
+  gpio: 21
   topic_name: pusher_action
 # -------------------------
 # Timers

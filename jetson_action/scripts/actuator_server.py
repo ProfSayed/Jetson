@@ -18,8 +18,8 @@ if __name__ == "__main__":
         actuator_pin = rospy.get_param('~gpio')
         if actuator_pin == 17:
             actuator_io = digitalio.DigitalInOut(board.D17)
-        if actuator_pin == 22:
-            actuator_io = digitalio.DigitalInOut(board.D22)
+        if actuator_pin == 21:
+            actuator_io = digitalio.DigitalInOut(board.D21)
         actuator_io.direction = digitalio.Direction.OUTPUT
         ## Start Server
         rospy.Service(topic_name, Actuator, actuate_cb)
