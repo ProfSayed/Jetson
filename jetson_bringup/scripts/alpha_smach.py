@@ -43,15 +43,15 @@ def stopper_sensor_cb(ud, msg):
     rospy.loginfo('Cylinder Detected by Sensor')
     if msg.cylinder_number > ud.cylinder_number:
         ud.cylinder_number = msg.cylinder_number
-        return True
-    else:
         return False
+    else:
+        return True
     
 def pusher_sensor_cb(ud, msg):
     rospy.loginfo('Cylinder %s Detected by Sensor' % msg.cylinder_number)
     if ud.cylinder_number == msg.cylinder_number:
-        return True 
-    return False
+        return False 
+    return True
     
 def capture_img_cb(ud, msg):
     rospy.loginfo('Image Recieved')
@@ -109,7 +109,7 @@ def main():
         smach.StateMachine.add('RELEASE_STOPPER', smach_ros.ServiceState(stopper_service_name, Actuator, request=ActuatorRequest(False)), transitions={'succeeded':'TIMER4'})
         smach.StateMachine.add('TIMER4',smach.CBState(timer_cb,[timer_4]), transitions={'succeeded':'STOPPER_ACTION'})
         smach.StateMachine.add('STOPPER_ACTION', smach_ros.ServiceState(stopper_service_name, Actuator, request=ActuatorRequest(True)), transitions={'succeeded':'MONITOR_PS'})
-        smach.StateMachine.add('MONITOR_PS', smach_ros.MonitorState(ps_topic_name, CountSensor, pusher_sensor_cb, 1), transitions={'invalid':'MONITOR_PS', 'valid':'TIMER5'})
+        smach.StateMachine.add('MONITOR_PS', smach_ros.MonitorState(ps_topic_name, CountSensor, pusher_sensor_cb, 1), transitions={'invalid':'TIMER5', 'valid':'MONITOR_PS'})
         smach.StateMachine.add('TIMER5',smach.CBState(timer_cb,[timer_5]), transitions={'succeeded':'PUSHER_ACTION'})
         smach.StateMachine.add('PUSHER_ACTION', smach_ros.ServiceState(pusher_service_name, Actuator, request=ActuatorRequest(True)), transitions={'succeeded':'TIMER6'})
         smach.StateMachine.add('TIMER6',smach.CBState(timer_cb,[timer_6]), transitions={'succeeded':'RETRACT_PUSHER'})
@@ -119,7 +119,7 @@ def main():
     sm_stop = smach.StateMachine(outcomes=['succeeded','preempted','aborted'],output_keys=['cylinder_number'])
     with sm_stop:
         sm_detect.userdata.cylinder_number = 0
-        smach.StateMachine.add('MONITOR_SS', smach_ros.MonitorState(ss_topic_name, CountSensor, stopper_sensor_cb, 1, input_keys=['cylinder_number'], output_keys=['cylinder_number']), transitions={'invalid':'MONITOR_SS', 'valid':'TIMER1'})
+        smach.StateMachine.add('MONITOR_SS', smach_ros.MonitorState(ss_topic_name, CountSensor, stopper_sensor_cb, 1, input_keys=['cylinder_number'], output_keys=['cylinder_number']), transitions={'invalid':'TIMER1', 'valid':'MONITOR_SS'})
         smach.StateMachine.add('TIMER1',smach.CBState(timer_cb,[timer_1]), transitions={'succeeded':'STOPPER_ACTION'})
         smach.StateMachine.add('STOPPER_ACTION', smach_ros.ServiceState(stopper_service_name, Actuator, request=ActuatorRequest(True)), transitions={'succeeded':'succeeded'})
    
