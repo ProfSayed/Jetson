@@ -35,7 +35,7 @@ class If_cap(smach.State):
         smach.State.__init__(self, outcomes=['has_cap','no_cap'],input_keys=['has_cap_result'])
 
     def execute(self, ud):
-        if ud.has_cap_result == 0:
+        if ud.has_cap_result == 1:
             return "has_cap"
         else:
             return "no_cap"
