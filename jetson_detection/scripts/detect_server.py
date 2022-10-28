@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import os
 import cv2
 import torch
 import rospy
@@ -19,7 +20,8 @@ class Process_image:
         cv_image = np.frombuffer(image_data.data, dtype=np.uint8).reshape(image_data.height, image_data.width, -1)
         
         ## Save img
-        filename = self.n + '.jpg'
+        rospy.loginfo(os.getcwd())
+        filename = str(self.n) + '.jpg'
         cv2.imwrite(filename, cv_image)
         self.n += 1
 
