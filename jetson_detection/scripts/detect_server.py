@@ -14,9 +14,9 @@ class Process_image:
     def prcoess_img(self,req):
         rospy.loginfo("Image Recieved")
         image_data = req.raw_image
-        # cv_image = np.frombuffer(image_data.data, dtype=np.uint8).reshape(image_data.height, image_data.width, -1)
+        cv_image = np.frombuffer(image_data.data, dtype=np.uint8).reshape(image_data.height, image_data.width, -1)
 
-        result = self.model(image_data, size=256)
+        result = self.model(cv_image, size=256)
         output = result.xyxy[0].cpu().numpy().tolist()
         if len(output) > 0:
             rospy.loginfo("Result: %d" %int(output[0][-1]))
