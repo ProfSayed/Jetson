@@ -34,5 +34,5 @@ raw_image_topic_name: raw_image
 detect_server:
   topic_name: object_detection
   model_path: "$(find jetson_detection)/models/best.engine"
-  model_config: 0.85     # Filter Results
-  number_of_frames_proc: 7
+  model_config: 0.7     # Filter Results
+  number_of_frames_proc: 10
