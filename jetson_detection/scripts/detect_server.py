@@ -2,6 +2,7 @@
 import torch
 import rospy
 import numpy as np
+from cv_bridge import CvBridge, CvBridgeError
 from jetson_msgs.srv import Detect ,DetectResponse
 
 class Process_image:
@@ -10,12 +11,19 @@ class Process_image:
         model_path = rospy.get_param('~model_path')
         self.model = torch.hub.load('ultralytics/yolov5', 'custom', path=model_path)  
         self.model.conf = rospy.get_param('~model_config')
+        
+        ## CV Bridge
+        self.bridge = CvBridge()
 
     def prcoess_img(self,req):
         rospy.loginfo("Image Recieved")
         image_data = req.raw_image
-        cv_image = np.frombuffer(image_data.data, dtype=np.uint8).reshape(image_data.height, image_data.width, -1)
-        
+        # cv_image = np.frombuffer(image_data.data, dtype=np.uint8).reshape(image_data.height, image_data.width, -1)
+        try:
+            cv_image = self.bridge.imgmsg_to_cv2(image_data, "bgr8")
+        except CvBridgeError as e:
+            rospy.ERROR(e)
+            
         result = self.model(cv_image, size=256)
         output = result.xyxy[0].cpu().numpy().tolist()
         if len(output) > 0:
