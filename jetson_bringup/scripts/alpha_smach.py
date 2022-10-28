@@ -58,7 +58,7 @@ class If_cap(smach.State):
 
 def stopper_sensor_cb(ud, msg):
     rospy.loginfo('Cylinder Detected by Sensor')
-    if msg.cylinder_number:
+    if msg.cylinder_number > ud.cylinder_number:
         ud.cylinder_number = msg.cylinder_number
         return False
     else:
@@ -143,7 +143,7 @@ def main():
     ## Parent State
     sm_top = smach.StateMachine(outcomes=['succeeded','preempted','aborted'])
     with sm_top:
-        sm_top.userdata.cylinder_number = 0
+        sm_top.userdata.cylinder_number = -1
         # smach.StateMachine.add('TIMER',smach.CBState(timer_cb,[t_sensor_pusher]), transitions={'succeeded':'PUSHER_ACTION'})
         smach.StateMachine.add('RESET',sm_reset, transitions={'succeeded':'STOPPER_GROUP'})
         smach.StateMachine.add('STOPPER_GROUP',sm_stop, transitions={'succeeded':'TIMER2'})
