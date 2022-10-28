@@ -113,7 +113,7 @@ def main():
         smach.StateMachine.add('TIMER5',smach.CBState(timer_cb,[timer_5]), transitions={'succeeded':'PUSHER_ACTION'})
         smach.StateMachine.add('PUSHER_ACTION', smach_ros.ServiceState(pusher_service_name, Actuator, request=ActuatorRequest(True)), transitions={'succeeded':'TIMER6'})
         smach.StateMachine.add('TIMER6',smach.CBState(timer_cb,[timer_6]), transitions={'succeeded':'RETRACT_PUSHER'})
-        smach.StateMachine.add('RETRACT_PUSHER', smach_ros.ServiceState(pusher_service_name, Actuator, request=ActuatorRequest(True)))
+        smach.StateMachine.add('RETRACT_PUSHER', smach_ros.ServiceState(pusher_service_name, Actuator, request=ActuatorRequest(False)))
    
     ## STOPPER Group
     sm_stop = smach.StateMachine(outcomes=['succeeded','preempted','aborted'], input_keys=['cylinder_number'],output_keys=['cylinder_number'])

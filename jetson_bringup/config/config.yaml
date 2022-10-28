@@ -20,7 +20,7 @@ pusher_server:
 # -------------------------
 # Timers
 timers: 
-  timer_1 : 0.5         
+  timer_1 : 0.2       
   timer_2 : 1.0      
   timer_3 : 0.5  
   timer_4 : 0.5        
