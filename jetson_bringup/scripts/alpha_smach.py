@@ -49,7 +49,7 @@ def stopper_sensor_cb(ud, msg):
     
 def pusher_sensor_cb(ud, msg):
     rospy.loginfo('Cylinder %s Detected by Sensor' % msg.cylinder_number)
-    if ud.cylinder_number == msg.cylinder_number:
+    if msg.cylinder_number:
         return False 
     return True
     
@@ -116,9 +116,9 @@ def main():
         smach.StateMachine.add('RETRACT_PUSHER', smach_ros.ServiceState(pusher_service_name, Actuator, request=ActuatorRequest(True)))
    
     ## STOPPER Group
-    sm_stop = smach.StateMachine(outcomes=['succeeded','preempted','aborted'],output_keys=['cylinder_number'])
+    sm_stop = smach.StateMachine(outcomes=['succeeded','preempted','aborted'], input_keys=['cylinder_number'],output_keys=['cylinder_number'])
     with sm_stop:
-        sm_detect.userdata.cylinder_number = 0
+        
         smach.StateMachine.add('MONITOR_SS', smach_ros.MonitorState(ss_topic_name, CountSensor, stopper_sensor_cb, 1, input_keys=['cylinder_number'], output_keys=['cylinder_number']), transitions={'invalid':'TIMER1', 'valid':'MONITOR_SS'})
         smach.StateMachine.add('TIMER1',smach.CBState(timer_cb,[timer_1]), transitions={'succeeded':'STOPPER_ACTION'})
         smach.StateMachine.add('STOPPER_ACTION', smach_ros.ServiceState(stopper_service_name, Actuator, request=ActuatorRequest(True)), transitions={'succeeded':'succeeded'})
@@ -126,6 +126,7 @@ def main():
     ## Parent State
     sm_top = smach.StateMachine(outcomes=['succeeded','preempted','aborted'])
     with sm_top:
+        sm_top.userdata.cylinder_number = 0
         # smach.StateMachine.add('TIMER',smach.CBState(timer_cb,[t_sensor_pusher]), transitions={'succeeded':'PUSHER_ACTION'})
         smach.StateMachine.add('RESET',sm_reset, transitions={'succeeded':'STOPPER_GROUP'})
         smach.StateMachine.add('STOPPER_GROUP',sm_stop, transitions={'succeeded':'TIMER2'})
