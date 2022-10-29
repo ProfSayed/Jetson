@@ -22,8 +22,8 @@ pusher_server:
 timers: 
   timer_1 : 0.0       
   timer_2 : 0.5     
-  timer_3 : 0.35  
-  timer_4 : 0.3        
+  timer_3 : 0.3  
+  timer_4 : 0.45        
   timer_5 : 0.3        
   timer_6 : 1.0      
 # -------------------------
