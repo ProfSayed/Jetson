@@ -57,12 +57,12 @@ class If_cap(smach.State):
             return "no_cap"
 
 def stopper_sensor_cb(ud, msg):
-    rospy.loginfo('Cylinder Detected by Sensor')
+    rospy.loginfo('Cylinder %s Detected by Sensor'% msg.cylinder_number)
     if ud.cylinder_number > msg.cylinder_number:
         ud.cylinder_number = msg.cylinder_number
         return False
     else:
-        rospy.sleep(0.1)
+        rospy.sleep(0.01)
         return True
     
 def pusher_sensor_cb(ud, msg):
