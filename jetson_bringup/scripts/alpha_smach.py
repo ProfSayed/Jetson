@@ -12,9 +12,9 @@ class Detect_max(smach.State):
         smach.State.__init__(self, outcomes=['succeeded','more_frames'], input_keys=['n_frames','counter','has_cap','has_cap_result','result_list'],output_keys=['counter','has_cap_result','result_list'])
 
     def execute(self, ud):
-        if ud.counter == 50:
+        if ud.counter == ud.n_frames:
             ud.counter = 0
-            ud.has_cap_result = 0
+            ud.has_cap_result = 1
             return 'succeeded' 
 
         if ud.has_cap == -1:
@@ -102,7 +102,7 @@ def main():
     timer_5 = rospy.get_param('/timers/timer_5')
     timer_6 = rospy.get_param('/timers/timer_6')
     # Detection
-    n_frames = rospy.get_param('/detect_server/number_of_frames_proc')
+    n_frames = rospy.get_param('/detect_server/max_frames_to_ignore')
 
     ## RESET Group
     sm_reset = smach.StateMachine(outcomes=['succeeded','preempted','aborted'])

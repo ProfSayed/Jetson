@@ -35,4 +35,4 @@ detect_server:
   topic_name: object_detection
   model_path: "$(find jetson_detection)/models/best.engine"
   model_config: 0.8     # Filter Results
-  number_of_frames_proc: 10
+  max_frames_to_ignore: 30
