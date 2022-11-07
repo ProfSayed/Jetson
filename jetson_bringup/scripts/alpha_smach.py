@@ -9,43 +9,39 @@ from jetson_msgs.srv import Detect
 
 class Detect_max(smach.State):
     def __init__(self):
-        smach.State.__init__(self, outcomes=['succeeded','more_frames'], input_keys=['n_frames','counter','has_cap','has_cap_result','result_list'],output_keys=['counter','has_cap_result','result_list'])
+        smach.State.__init__(self, outcomes=['succeeded','more_frames'], input_keys=['n_frames_to_proc','kick_threshold_frames','counter','has_cap','has_cap_result','result_list'],output_keys=['counter','has_cap_result','result_list'])
 
     def execute(self, ud):
-        if ud.counter == ud.n_frames:
+        if ud.counter == ud.kick_threshold_frames:
+            ## Captured many frames but still gets -1, kick cylinder
             ud.counter = 0
             ud.has_cap_result = 1
             return 'succeeded' 
 
+        ## has_cap class coming from detection server (0,-1, 1)
         if ud.has_cap == -1:
             ud.counter += 1
             return 'more_frames'
         else:   
-            ud.counter = 0
-            ud.has_cap_result = ud.has_cap
-            rospy.loginfo("Detected Cylinder: %s" %ud.has_cap_result)
-            return 'succeeded'
-
-    # def execute(self, ud):
-    #     if ud.counter < ud.n_frames:
-    #         ud.counter += 1
-    #         if ud.has_cap != -1:
-    #             ud.result_list.append(ud.has_cap)
-    #             rospy.loginfo("Detected Cylinder: %s"%ud.has_cap)
-    #         return 'more_frames'
-    #     else:    
-    #         cnt = 0
-    #         n = ud.result_list[0]
-    #         for i in ud.result_list:
-    #             curr_freq = ud.result_list.count(i)
-    #             if curr_freq > cnt:
-    #                 cnt = curr_freq
-    #                 n = i
-    #         ## Result
-    #         ud.counter = 0
-    #         ud.has_cap_result = n
-    #         rospy.loginfo("Detected Cylinder Total: %s"%n)
-    #         return 'succeeded'
+            if ud.counter < ud.n_frames_to_proc:
+                ## Append 0 or 1
+                ud.result_list.append(ud.has_cap)
+                ud.counter += 1
+                return 'more_frames'
+            else:
+                ## Reset frame counter
+                ud.counter = 0 
+                ## Look for max occurance of 0 or 1
+                n = ud.result_list[0]
+                for i in ud.result_list:
+                    curr_freq = ud.result_list.count(i)
+                    if curr_freq > cnt:
+                        cnt = curr_freq
+                        n = i
+                ## Output the result
+                ud.has_cap_result = n
+                rospy.loginfo("Detected Cylinder: %s" %n)
+                return 'succeeded'
 
 class If_cap(smach.State):
     def __init__(self):
@@ -60,6 +56,7 @@ class If_cap(smach.State):
 def stopper_sensor_cb(ud, msg):
     rospy.loginfo('Cylinder %s Detected by Sensor'% msg.cylinder_number)
     if ud.cylinder_number < msg.cylinder_number:
+        ## To Next State "Finished Here"
         ud.cylinder_number = msg.cylinder_number
         return False
     else:
@@ -91,7 +88,7 @@ def main():
     raw_img_topic_name = rospy.get_param('/raw_image_topic_name')
     ss_topic_name = rospy.get_param('/stopper_sensor/topic_name')
     ps_topic_name = rospy.get_param('/pusher_sensor/topic_name')
-    # Services
+    # Services [Actuators]
     pusher_service_name = rospy.get_param('/pusher_server/topic_name')
     stopper_service_name = rospy.get_param('/stopper_server/topic_name')
     # Timers
@@ -102,21 +99,23 @@ def main():
     timer_5 = rospy.get_param('/timers/timer_5')
     timer_6 = rospy.get_param('/timers/timer_6')
     # Detection
-    n_frames = rospy.get_param('/detect_server/max_frames_to_ignore')
+    kick_threshold_frames = rospy.get_param('/detect_server/max_frames_to_kick')
+    n_frames_to_proc = rospy.get_param('/detect_server/frames_to_proc')
 
     ## RESET Group
     sm_reset = smach.StateMachine(outcomes=['succeeded','preempted','aborted'])
     with sm_reset:
         smach.StateMachine.add('RESET_PUSHER' , smach_ros.ServiceState(pusher_service_name, Actuator , request=ActuatorRequest(False)), transitions={'succeeded':'RESET_STOPPER'})
         smach.StateMachine.add('RESET_STOPPER', smach_ros.ServiceState(stopper_service_name, Actuator, request=ActuatorRequest(False)))
-    
+
     ## Object Detection Group
     sm_detect = smach.StateMachine(outcomes=['succeeded','preempted','aborted'], output_keys=['has_cap_result'])
     detect_service_name = rospy.get_param('/detect_server/topic_name')
     with sm_detect:
         sm_detect.userdata.counter = 0
         sm_detect.userdata.has_cap_result = -1
-        sm_detect.userdata.n_frames = n_frames
+        sm_detect.userdata.kick_threshold_frames = kick_threshold_frames
+        sm_detect.userdata.n_frames_to_proc = n_frames_to_proc
         sm_detect.userdata.result_list = []
         smach.StateMachine.add('CAP_FRAME', smach_ros.MonitorState(raw_img_topic_name, Image, capture_img_cb, 1, output_keys=['raw_image']), transitions={'invalid':'CAP_FRAME', 'valid':'DETECT_FRAME'})
         smach.StateMachine.add('DETECT_FRAME' , smach_ros.ServiceState(detect_service_name, Detect , request_slots=['raw_image'], response_slots=['has_cap']), transitions={'succeeded':'DETECT_RESULT'})
@@ -133,20 +132,19 @@ def main():
         smach.StateMachine.add('PUSHER_ACTION', smach_ros.ServiceState(pusher_service_name, Actuator, request=ActuatorRequest(True)), transitions={'succeeded':'TIMER6'})
         smach.StateMachine.add('TIMER6',smach.CBState(timer_cb,[timer_6]), transitions={'succeeded':'RETRACT_PUSHER'})
         smach.StateMachine.add('RETRACT_PUSHER', smach_ros.ServiceState(pusher_service_name, Actuator, request=ActuatorRequest(False)))
-   
+
     ## STOPPER Group
     sm_stop = smach.StateMachine(outcomes=['succeeded','preempted','aborted'], input_keys=['cylinder_number'],output_keys=['cylinder_number'])
     with sm_stop:
-        
+        ## Monitor Stopper Sensor [Subscriber to stopper sensor]
         smach.StateMachine.add('MONITOR_SS', smach_ros.MonitorState(ss_topic_name, CountSensor, stopper_sensor_cb, 1, input_keys=['cylinder_number'], output_keys=['cylinder_number']), transitions={'invalid':'TIMER1', 'valid':'MONITOR_SS'})
         smach.StateMachine.add('TIMER1',smach.CBState(timer_cb,[timer_1]), transitions={'succeeded':'STOPPER_ACTION'})
         smach.StateMachine.add('STOPPER_ACTION', smach_ros.ServiceState(stopper_service_name, Actuator, request=ActuatorRequest(True)), transitions={'succeeded':'succeeded'})
    
-    ## Parent State
+    ## Parent State (Main Group)
     sm_top = smach.StateMachine(outcomes=['succeeded','preempted','aborted'])
     with sm_top:
         sm_top.userdata.cylinder_number = -1
-        # smach.StateMachine.add('TIMER',smach.CBState(timer_cb,[t_sensor_pusher]), transitions={'succeeded':'PUSHER_ACTION'})
         smach.StateMachine.add('RESET',sm_reset, transitions={'succeeded':'STOPPER_GROUP'})
         smach.StateMachine.add('STOPPER_GROUP',sm_stop, transitions={'succeeded':'TIMER2'})
         smach.StateMachine.add('TIMER2',smach.CBState(timer_cb,[timer_2]), transitions={'succeeded':'DETECT'})

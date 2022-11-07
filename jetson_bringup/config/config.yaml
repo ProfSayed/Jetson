@@ -35,4 +35,5 @@ detect_server:
   topic_name: object_detection
   model_path: "$(find jetson_detection)/models/best.engine"
   model_config: 0.7     # Filter Results
-  max_frames_to_ignore: 30
+  max_frames_to_kick: 20  # Kicked whenever this number is reached
+  frames_to_proc: 5       # Max occurance of a value (0 or 1) to determine the cylinder has a cap or not

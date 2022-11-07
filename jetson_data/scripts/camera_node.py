@@ -10,7 +10,7 @@ def main():
         bridge = CvBridge()
         topic_name = rospy.get_param('/raw_image_topic_name')
         img_pub = rospy.Publisher(topic_name, Image,queue_size=1)
-        rate = rospy.Rate(21)
+        rate = rospy.Rate(28)
 
         ## Camera
         # Camera Display Settings

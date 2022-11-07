@@ -6,7 +6,7 @@ import digitalio
 from jetson_msgs.srv import Actuator,ActuatorResponse
 
 def actuate_cb(req):
-    actuator_io.value = req.actuate
+    actuator_io.value = req.actuate ## True -> High or False -> Low
     rospy.loginfo("%s action: %s"%(rospy.get_name(), req.actuate))
     return ActuatorResponse(True)
 
