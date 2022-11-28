@@ -1,31 +1,31 @@
 # Cylinders Inspection using JetsonNano  
-## Compile OpenCV 4.5.5 from source on Jetson Nano Jetpack 4.6.2 [L4T 32.7.2] with Gstreamer and CUDA
+## Compile OpenCV from source on Jetson Nano Jetpack 4.6.2 [L4T 32.7.2]   
+## on Jetson Nano with the latest opencv [4.5.5] with Gstreamer and CUDA
 Remove any Installed OpenCV:  
 ```bash
 sudo apt purge libopencv-dev libopencv-python libopencv-samples libopencv*  
 python3 -m pip uninstall opencv-python
 ```  
-## on Jetson Nano with the latest opencv [4.5.5]
 ## Required libraries for build  
-'''bash
+```bash  
 sudo apt install build-essential cmake git pkg-config libgtk-3-dev \
     libavcodec-dev libavformat-dev libswscale-dev libv4l-dev \
     libxvidcore-dev libx264-dev libjpeg-dev libpng-dev libtiff-dev \
     gfortran openexr libatlas-base-dev python3-dev python3-numpy \
     libtbb2 libtbb-dev libdc1394-22-dev
-'''  
+```  
 ## NOTES
 1. opencv & opencv_contrib should be the same version/tag/tree 
 2. make -j4 on usb-drive and at 100% it will crash > make with one processor 
 ## Clone the opencv repo
-'''bash  
+```bash  
 mkdir ~/opencv_build && cd ~/opencv_build
 git clone https://github.com/opencv/opencv.git
 git clone https://github.com/opencv/opencv_contrib.git
 cd ~/opencv_build/opencv
 mkdir build && cd build  
-'''  
-''' bash  
+```  
+``` bash  
 cmake -D WITH_CUDA=ON \
     -D ENABLE_PRECOMPILED_HEADERS=OFF \
     -D WITH_EIGEN=OFF \
@@ -44,19 +44,18 @@ cmake -D WITH_CUDA=ON \
     -D WITH_GTK=ON \
     -D WITH_QT=OFF \
     -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules ..
-'''
-'''bash 
+```
+```bash 
 make -j$(nproc)
 sudo make install
 sudo ldconfig
-'''
+```
   
 ## Yolov5
-'''bash
+```bash
 cd ~  
-'''
+```
 [Follow the NEW official tutorial](https://github.com/ultralytics/yolov5/issues/9627)  
-```  
 ### Convert to TensorRT  
 python3 export.py --weights yolov5s.pt --include engine --device 0  
 ## Setup the environment  
@@ -65,7 +64,7 @@ sudo pip3 install rospkg catkin_pkg
 sudo pip3 install --upgrade adafruit_blinka
 sudo apt-get install ros-melodic-image-transport ros-melodic-vision-msgs
 sudo apt-get install ros-melodic-smach ros-melodic-smach-ros ros-melodic-executive-smach ros-melodic-smach-viewer
-
+```
 ## Create the workspace and download the repo
 ```bash  
 mkdir -p ~/catkin_ws/src  
