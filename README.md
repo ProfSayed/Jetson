@@ -1,6 +1,5 @@
 # Cylinders Inspection using JetsonNano  
-## Compile OpenCV from source on Jetson Nano Jetpack 4.6.2 [L4T 32.7.2]   
-## on Jetson Nano with the latest opencv [4.5.5] with Gstreamer and CUDA
+## Compile OpenCV from source on Jetson Nano Jetpack 4.6.2 [L4T 32.7.2] on Jetson Nano with the latest opencv [4.5.5] with Gstreamer and CUDA  
 Remove any Installed OpenCV:  
 ```bash
 sudo apt purge libopencv-dev libopencv-python libopencv-samples libopencv*  
@@ -55,9 +54,11 @@ sudo ldconfig
 ```bash
 cd ~  
 ```
-[Follow the NEW official tutorial](https://github.com/ultralytics/yolov5/issues/9627)  
+[Follow Me🌟](https://github.com/ultralytics/yolov5/issues/9627)  
 ### Convert to TensorRT  
-python3 export.py --weights yolov5s.pt --include engine --device 0  
+```bash  
+python3 ~/yolov5/export.py --weights <path to weighs.pt file> --include engine --device 0  
+```
 ## Setup the environment  
 ```bash  
 sudo pip3 install rospkg catkin_pkg
