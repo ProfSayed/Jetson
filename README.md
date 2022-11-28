@@ -100,7 +100,7 @@ roscore
 ```bash  
 roslaunch jetson_bringup init_param.launch  
 ```
-Now Run any node as you like:  
+Now Run any node:  
 * Start Object Detection node  
 ```rosrun jetson_detection detect_server.py```  
 * Start Pusher and Stopper Actuators Server  
